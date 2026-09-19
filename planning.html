@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Planning · Sophie EDN</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="topbar" class="topbar"></div>
+
+<main>
+  <div class="card">
+    <h1 class="mt0" id="phase-title">Sprint rang A</h1>
+    <p class="text-muted" id="phase-sub"></p>
+  </div>
+
+  <div class="card">
+    <h2>Journée type (7 h)</h2>
+    <div id="template-blocks"></div>
+  </div>
+
+  <div class="card">
+    <h2>Les 23 jours</h2>
+    <div id="days-list"></div>
+  </div>
+
+  <div class="card">
+    <h2>Jours d'épreuve (12 → 15 octobre)</h2>
+    <div id="exam-days"></div>
+    <h3>Règles</h3>
+    <ul class="rule-list" id="exam-rules"></ul>
+  </div>
+
+  <div class="card">
+    <h2>Filet de janvier</h2>
+    <p class="small text-muted" id="phase3-condition"></p>
+    <div id="phase3-blocks"></div>
+  </div>
+
+  <div class="card">
+    <h2>Règles transversales</h2>
+    <ul class="rule-list" id="global-rules"></ul>
+  </div>
+</main>
+
+<footer></footer>
+
+<script type="module">
+import { loadPlanning, renderTopbar, todayISO, formatDateShort } from "./js/app.js";
+
+const iso = todayISO();
+
+function chargeClass(charge) {
+  return "charge-" + charge.replace(/\s/g, "-").replace(/é/g, "e");
+}
+
+async function init() {
+  const planning = await loadPlanning();
+  renderTopbar("planning.html", planning);
+
+  document.getElementById("phase-title").textContent = planning.phase_1.libelle;
+  document.getElementById("phase-sub").textContent = planning.meta.principe_directeur;
+
+  document.getElementById("template-blocks").innerHTML = planning.template_journee.blocs
+    .map(
+      (b) => `
+      <div style="padding:10px 0;border-bottom:1px solid var(--border)">
+        <strong>${b.nom}</strong> <span class="pill">${b.duree_min} min</span> <span class="text-muted small">${b.moment}</span>
+        <p style="margin:6px 0 2px">${b.contenu}</p>
+        <p class="small text-muted" style="margin:0">${b.regle}</p>
+      </div>`
+    )
+    .join("");
+
+  document.getElementById("days-list").innerHTML = planning.phase_1.jours
+    .map((j) => {
+      const rowClass = j.date === iso ? "today" : j.date < iso ? "past" : "";
+      const dow = new Date(j.date + "T00:00:00").toLocaleDateString("fr-FR", { weekday: "short" });
+      return `
+      <div class="day-row ${rowClass}">
+        <div class="day-num"><div class="n">${j.j}</div><div class="d">${dow} ${formatDateShort(j.date)}</div></div>
+        <div class="day-body">
+          <div class="principal">${j.principal}<span class="charge-badge ${chargeClass(j.charge)}">${j.charge}</span></div>
+          <div class="meta">Secondaire : ${j.secondaire}</div>
+          <div class="meta">Entraînement : ${j.entrainement}</div>
+          ${j.note ? `<div class="note">${j.note}</div>` : ""}
+        </div>
+      </div>`;
+    })
+    .join("");
+
+  document.getElementById("exam-days").innerHTML = `
+    <table class="browse">
+      <thead><tr><th>Date</th><th>Épreuve</th><th>Horaire</th></tr></thead>
+      <tbody>
+        ${planning.meta.cible_principale.detail
+          .map((d) => `<tr><td>${formatDateShort(d.date)}</td><td>${d.epreuve}</td><td>${d.horaire}${d.note ? ` <span class="text-muted small">(${d.note})</span>` : ""}</td></tr>`)
+          .join("")}
+      </tbody>
+    </table>
+    <p class="small text-muted" style="margin-top:10px">Jours de secours : ${planning.meta.cible_principale.secours.map(formatDateShort).join(", ")}</p>
+  `;
+
+  document.getElementById("exam-rules").innerHTML = planning.phase_2.regles.map((r) => `<li>${r}</li>`).join("");
+
+  document.getElementById("phase3-condition").textContent =
+    planning.phase_3.condition_activation + " — période : " + formatDateShort(planning.phase_3.periode[0]) + " → " + formatDateShort(planning.phase_3.periode[1]);
+
+  document.getElementById("phase3-blocks").innerHTML = planning.phase_3.structure
+    .map(
+      (b) => `<div style="padding:8px 0;border-bottom:1px solid var(--border)">
+        <strong>${b.bloc}</strong> <span class="pill">${b.semaines} sem.</span>
+        <p style="margin:4px 0 0" class="small">${b.contenu}</p>
+      </div>`
+    )
+    .join("") + `<p class="small text-muted" style="margin-top:10px">${planning.phase_3.note}</p>`;
+
+  document.getElementById("global-rules").innerHTML = planning.regles_transversales.map((r) => `<li>${r}</li>`).join("");
+
+  // Auto-scroll to today's row
+  const todayRow = document.querySelector(".day-row.today");
+  if (todayRow) setTimeout(() => todayRow.scrollIntoView({ block: "center", behavior: "smooth" }), 300);
+}
+
+init();
+</script>
+</body>
+</html>

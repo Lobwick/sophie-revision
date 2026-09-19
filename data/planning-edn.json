@@ -1,0 +1,126 @@
+{
+  "meta": {
+    "version": "1.0",
+    "genere_le": "2026-09-19",
+    "cible_principale": {
+      "nom": "EDN session 1",
+      "dates": ["2026-10-12", "2026-10-13", "2026-10-14", "2026-10-15"],
+      "detail": [
+        { "date": "2026-10-12", "epreuve": "1re unite de composition", "horaire": "15h-18h", "note": "demarrage technique obligatoire a 12h" },
+        { "date": "2026-10-13", "epreuve": "2e unite de composition", "horaire": "14h-17h" },
+        { "date": "2026-10-14", "epreuve": "3e unite de composition", "horaire": "14h-17h" },
+        { "date": "2026-10-15", "epreuve": "LCA (2 unites)", "horaire": "14h-17h" }
+      ],
+      "secours": ["2026-10-16", "2026-10-19"]
+    },
+    "cible_secondaire": {
+      "nom": "EDN session 2",
+      "dates": ["2027-01-13", "2027-01-14"],
+      "condition": "Reservee aux candidats n'ayant pas atteint le seuil de 14/20 aux connaissances de rang A en session 1"
+    },
+    "volume_quotidien_heures": 7,
+    "principe_directeur": "Le seuil d'acces aux ECOS porte sur le rang A. Toute arbitrage se tranche en faveur du rang A. Le rang B ne se travaille que sur les items a fort rendement.",
+    "jours_restants_phase_1": 23
+  },
+
+  "template_journee": {
+    "duree_totale_h": 7,
+    "blocs": [
+      {
+        "nom": "Rappel actif",
+        "duree_min": 60,
+        "moment": "matin (des le reveil)",
+        "contenu": "Cartes dues du jour (repetition espacee). Aucune relecture passive.",
+        "regle": "Si le backlog depasse 150 cartes, on ecrete : on garde les cartes rang A, on repousse le reste."
+      },
+      {
+        "nom": "Bloc principal",
+        "duree_min": 180,
+        "moment": "matin",
+        "contenu": "Specialite du jour, rang A uniquement au premier passage. Lecture active : on ferme le referentiel tous les 2 items et on restitue a voix haute.",
+        "regle": "Creer 8 a 15 cartes par item travaille, jamais plus. Une carte = un fait atomique."
+      },
+      {
+        "nom": "Entrainement chronometre",
+        "duree_min": 90,
+        "moment": "apres-midi",
+        "contenu": "QI + DP sur la specialite du matin, en conditions de temps.",
+        "regle": "Correction plus longue que l'epreuve. Chaque erreur genere une carte."
+      },
+      {
+        "nom": "Bloc secondaire",
+        "duree_min": 90,
+        "moment": "fin d'apres-midi",
+        "contenu": "Petite specialite ou transversal (voir champ 'secondaire' du jour).",
+        "regle": "Balayage rapide, objectif couverture et pas maitrise."
+      },
+      {
+        "nom": "Bilan",
+        "duree_min": 30,
+        "moment": "soir",
+        "contenu": "Relecture des cartes creees dans la journee, mise a jour du journal d'erreurs.",
+        "regle": "Non negociable. C'est ce bloc qui fait tenir la memorisation."
+      }
+    ]
+  },
+
+  "phase_1": {
+    "libelle": "Sprint rang A - 19 septembre au 11 octobre 2026",
+    "jours": [
+      { "j": 1, "date": "2026-09-19", "principal": "Cardiologie (SCA, insuffisance cardiaque, FA, valvulopathies)", "secondaire": "Methodologie EDN : format QI / DP, gestion du temps", "entrainement": "1 DP cardio + 40 QI", "charge": "normale" },
+      { "j": 2, "date": "2026-09-20", "principal": "Cardiologie (HTA, thrombose veineuse, embolie pulmonaire, arteriopathie)", "secondaire": "Therapeutique : anticoagulants, antiagregants", "entrainement": "1 DP + 40 QI", "charge": "normale" },
+      { "j": 3, "date": "2026-09-21", "principal": "Pneumologie (BPCO, asthme, PAC, insuffisance respiratoire)", "secondaire": "Tabac, sevrage, addictologie", "entrainement": "1 DP + 40 QI", "charge": "normale" },
+      { "j": 4, "date": "2026-09-22", "principal": "Pneumologie (cancer bronchique, pleuresies, pneumothorax, SAOS)", "secondaire": "Imagerie thoracique : lecture systematique", "entrainement": "1 DP + 40 QI", "charge": "normale" },
+      { "j": 5, "date": "2026-09-23", "principal": "Infectiologie (urgences : meningite, purpura fulminans, sepsis, PNA)", "secondaire": "Antibiotherapie : familles, spectres, indications", "entrainement": "1 DP + 40 QI", "charge": "normale" },
+      { "j": 6, "date": "2026-09-24", "principal": "Infectiologie (VIH, tuberculose, endocardite, vaccination, voyageur)", "secondaire": "Sante publique : declaration obligatoire, prevention", "entrainement": "1 DP + 40 QI", "charge": "normale" },
+      { "j": 7, "date": "2026-09-25", "principal": "LCA : bloc dedie (types d'etude, biais, mesures d'association)", "secondaire": "Statistiques : IC95, p, puissance, ITT", "entrainement": "1 article complet en conditions reelles", "charge": "normale", "note": "La LCA est une epreuve entiere de 3h le 15 octobre. Elle se travaille en bloc, pas en miettes." },
+      { "j": 8, "date": "2026-09-26", "principal": "Rappel actif global semaine 1 + reprise du journal d'erreurs", "secondaire": "Rien de neuf", "entrainement": "2 DP mixtes", "charge": "allegee" },
+      { "j": 9, "date": "2026-09-27", "principal": "Neurologie (AVC, epilepsie, cephalees, confusion, coma)", "secondaire": "Geriatrie : chute, iatrogenie, dependance", "entrainement": "1 DP + 40 QI", "charge": "normale" },
+      { "j": 10, "date": "2026-09-28", "principal": "Neurologie (SEP, Parkinson, neuropathies, myasthenie, demences)", "secondaire": "MPR : handicap, reeducation", "entrainement": "1 DP + 40 QI", "charge": "normale" },
+      { "j": 11, "date": "2026-09-29", "principal": "Psychiatrie (depression, suicide, bipolarite, schizophrenie, anxiete)", "secondaire": "Soins sans consentement, ethique, responsabilite", "entrainement": "1 DP + 40 QI", "charge": "normale", "note": "Le referentiel CNUP/AESP est en PDF libre : c'est la specialite ou la gratuite est la meilleure." },
+      { "j": 12, "date": "2026-09-30", "principal": "Hepato-gastro (hemorragie digestive, cirrhose, pancreatite, MICI)", "secondaire": "Nutrition : denutrition, obesite", "entrainement": "1 DP + 40 QI", "charge": "normale" },
+      { "j": 13, "date": "2026-10-01", "principal": "Hepato-gastro chirurgical (occlusion, appendicite, peritonite, hernies) + CCR", "secondaire": "Depistages organises", "entrainement": "1 DP + 40 QI", "charge": "normale" },
+      { "j": 14, "date": "2026-10-02", "principal": "Nephrologie (IRA, MRC, troubles hydro-electrolytiques, syndromes glomerulaires)", "secondaire": "Urologie : colique nephretique, retention, cancers uro", "entrainement": "1 DP + 40 QI", "charge": "normale" },
+      { "j": 15, "date": "2026-10-03", "principal": "Rappel actif global semaine 2", "secondaire": "LCA : 2e article chronometre", "entrainement": "2 DP mixtes", "charge": "allegee" },
+      { "j": 16, "date": "2026-10-04", "principal": "Endocrinologie (diabete et complications, thyroide, surrenale)", "secondaire": "Dyslipidemies, risque cardiovasculaire global", "entrainement": "1 DP + 40 QI", "charge": "normale" },
+      { "j": 17, "date": "2026-10-05", "principal": "Gynecologie-obstetrique (grossesse normale, pre-eclampsie, HPP, contraception)", "secondaire": "Sante de la femme : depistage col et sein", "entrainement": "1 DP + 40 QI", "charge": "normale" },
+      { "j": 18, "date": "2026-10-06", "principal": "Pediatrie (nourrisson febrile, bronchiolite, deshydratation, croissance, maltraitance)", "secondaire": "Vaccination de l'enfant", "entrainement": "1 DP + 40 QI", "charge": "normale" },
+      { "j": 19, "date": "2026-10-07", "principal": "Hematologie et cancerologie (anemies, leucemies, myelome, urgences oncologiques)", "secondaire": "Soins palliatifs, douleur, fin de vie", "entrainement": "1 DP + 40 QI", "charge": "normale" },
+      { "j": 20, "date": "2026-10-08", "principal": "Urgences et reanimation (arret cardiaque, chocs, intoxications, traumatologie, brulures)", "secondaire": "Anesthesie, transfusion", "entrainement": "1 DP + 40 QI", "charge": "normale" },
+      { "j": 21, "date": "2026-10-09", "principal": "Balayage petites specialites : dermatologie, ophtalmologie, ORL, rhumatologie, orthopedie", "secondaire": "Immunologie, anatomopathologie", "entrainement": "60 QI mixtes", "charge": "normale", "note": "Balayage, pas approfondissement. Objectif : ne pas decouvrir un item le jour J." },
+      { "j": 22, "date": "2026-10-10", "principal": "Transversaux : sante publique, therapeutique, iatrogenie, ethique et deontologie", "secondaire": "Reprise integrale du journal d'erreurs", "entrainement": "1 DP + 40 QI", "charge": "normale" },
+      { "j": 23, "date": "2026-10-11", "principal": "Cartes rang A uniquement, balayage complet", "secondaire": "Logistique : convocation, trajet, materiel, sommeil", "entrainement": "Aucun. Pas de nouveau contenu.", "charge": "tres allegee", "note": "Veille d'epreuve. Coucher tot. Le gain marginal d'une heure de revision est inferieur au cout d'une nuit courte." }
+    ]
+  },
+
+  "phase_2": {
+    "libelle": "Jours d'epreuve - 12 au 15 octobre 2026",
+    "regles": [
+      "Entre deux unites de composition : cartes rang A de la specialite la plus probable, maximum 45 minutes. Rien d'autre.",
+      "Ne jamais rechercher la correction d'une epreuve deja passee avant la fin des quatre jours.",
+      "Le 14 au soir : bascule integrale sur la LCA, qui est une epreuve de methode et non de connaissances.",
+      "Repas, hydratation, sommeil traites comme des elements du planning et non comme des variables d'ajustement."
+    ]
+  },
+
+  "phase_3": {
+    "libelle": "Filet janvier - a n'activer que si le seuil rang A n'est pas atteint",
+    "periode": ["2026-10-20", "2027-01-12"],
+    "condition_activation": "Resultats session 1 inferieurs au seuil de 14/20 sur les connaissances de rang A",
+    "structure": [
+      { "bloc": "Decompression", "semaines": 1, "contenu": "Arret complet. Analyse froide des resultats par specialite une fois le rapport disponible." },
+      { "bloc": "Tour complet", "semaines": 7, "contenu": "Premier passage exhaustif sur les 367 items, rang A puis rang B sur les specialites a fort rendement. Rythme : 7 a 8 items par jour." },
+      { "bloc": "Consolidation", "semaines": 3, "contenu": "Deuxieme tour cible sur les zones faibles identifiees. Cartes en repetition espacee sur l'integralite du deck." },
+      { "bloc": "Affutage", "semaines": 2, "contenu": "DP et QI quotidiens en conditions reelles, plus rappel actif. Aucun contenu neuf les 10 derniers jours." }
+    ],
+    "note": "Cette phase suppose un deck de cartes deja constitue pendant la phase 1. C'est le principal actif transferable d'une session a l'autre."
+  },
+
+  "regles_transversales": [
+    "Une carte ne se cree qu'a partir d'une erreur ou d'un fait rang A explicite. Jamais a partir d'un paragraphe entier.",
+    "Le rappel actif prime sur la relecture, toujours. Si le temps manque, on coupe la lecture, pas les cartes.",
+    "Le journal d'erreurs est un fichier unique, relu integralement les jours allegees.",
+    "Aucun nouveau support d'apprentissage apres le 1er octobre. Changer de source a J-10 est le meilleur moyen de tout desorganiser.",
+    "Les contenus doivent etre recoupes avec LiSA et les referentiels de college : ce sont les seules sources opposables."
+  ]
+}

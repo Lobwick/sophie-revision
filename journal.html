@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Journal · Sophie EDN</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="topbar" class="topbar"></div>
+
+<main>
+  <div class="card">
+    <h1 class="mt0">Journal d'erreurs</h1>
+    <p class="text-muted small">Un fichier unique, relu intégralement les jours allégés. Note ce qui a fait échouer une QI ou un DP — c'est ce matériau qui devient les meilleures cartes.</p>
+    <div class="field">
+      <label>Nouvelle entrée</label>
+      <textarea id="new-entry" placeholder="Ex : confondu les critères de Light exsudat/transsudat — refaire une carte, recouper avec le référentiel de pneumologie."></textarea>
+    </div>
+    <button class="primary" id="add-entry" style="margin-top:10px">Ajouter au journal</button>
+  </div>
+
+  <div class="card">
+    <h2 class="mt0">Entrées <span id="entry-count" class="text-muted small"></span></h2>
+    <div id="entries-list"></div>
+  </div>
+
+  <div class="card">
+    <h2 class="mt0">Sauvegarde</h2>
+    <p class="small text-muted">Tout est stocké uniquement dans ce navigateur (progression des cartes, cartes personnelles, journal). En cas de changement d'appareil ou de nettoyage du navigateur, ces données seraient perdues. Exporte régulièrement une sauvegarde.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+      <button id="export-btn">⬇ Exporter une sauvegarde</button>
+      <label class="btn" style="margin:0;display:inline-flex;align-items:center;cursor:pointer">
+        ⬆ Importer une sauvegarde
+        <input type="file" id="import-input" accept="application/json" style="display:none" />
+      </label>
+    </div>
+  </div>
+</main>
+
+<footer></footer>
+
+<script type="module">
+import {
+  loadPlanning, renderTopbar, getJournal, addJournalEntry, deleteJournalEntry,
+  exportBackup, importBackup, formatDateFR, toast
+} from "./js/app.js";
+
+async function init() {
+  const planning = await loadPlanning();
+  renderTopbar("journal.html", planning);
+  renderEntries();
+}
+
+function renderEntries() {
+  const entries = getJournal();
+  document.getElementById("entry-count").textContent = `(${entries.length})`;
+  const list = document.getElementById("entries-list");
+  if (entries.length === 0) {
+    list.innerHTML = `<div class="empty-state"><div class="big">📓</div><p class="small">Aucune entrée pour l'instant.</p></div>`;
+    return;
+  }
+  list.innerHTML = entries
+    .map(
+      (e) => `<div class="journal-entry">
+        <button class="ghost del small" data-id="${e.id}" style="float:right">Supprimer</button>
+        <div class="date">${formatDateFR(e.date)}</div>
+        <div class="text">${escapeHtml(e.text)}</div>
+      </div>`
+    )
+    .join("");
+  document.querySelectorAll(".journal-entry .del").forEach((b) =>
+    b.addEventListener("click", () => {
+      deleteJournalEntry(b.dataset.id);
+      renderEntries();
+      toast("Entrée supprimée");
+    })
+  );
+}
+
+function escapeHtml(s) {
+  const div = document.createElement("div");
+  div.textContent = s;
+  return div.innerHTML;
+}
+
+document.getElementById("add-entry").addEventListener("click", () => {
+  const ta = document.getElementById("new-entry");
+  const text = ta.value.trim();
+  if (!text) return;
+  addJournalEntry(text);
+  ta.value = "";
+  renderEntries();
+  toast("Ajouté au journal");
+});
+
+document.getElementById("export-btn").addEventListener("click", () => {
+  exportBackup();
+  toast("Sauvegarde téléchargée");
+});
+
+document.getElementById("import-input").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    const text = await file.text();
+    const obj = JSON.parse(text);
+    importBackup(obj);
+    renderEntries();
+    toast("Sauvegarde importée");
+  } catch (err) {
+    console.error(err);
+    toast("Fichier de sauvegarde invalide");
+  }
+  e.target.value = "";
+});
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cartes · Sophie EDN</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="topbar" class="topbar"></div>
+
+<main>
+  <div class="card" style="padding-bottom:0">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+      <button class="tab-btn primary" data-tab="review">Réviser</button>
+      <button class="tab-btn" data-tab="browse">Parcourir</button>
+      <button class="tab-btn" data-tab="add">Ajouter une carte</button>
+    </div>
+  </div>
+
+  <section id="tab-review">
+    <div class="card">
+      <div class="filters">
+        <label style="margin:0" class="small">Deck</label>
+        <select id="review-deck-filter"><option value="">Toutes spécialités</option></select>
+        <label style="margin:0" class="small">Rang</label>
+        <select id="review-rang-filter">
+          <option value="">Rang A + B</option>
+          <option value="A">Rang A</option>
+          <option value="B">Rang B</option>
+        </select>
+      </div>
+      <div id="review-summary" class="small text-muted"></div>
+    </div>
+
+    <div id="review-area"></div>
+  </section>
+
+  <section id="tab-browse" style="display:none">
+    <div class="card">
+      <div class="filters">
+        <input type="text" id="browse-search" placeholder="Rechercher…" />
+        <select id="browse-deck-filter"><option value="">Toutes spécialités</option></select>
+        <select id="browse-rang-filter">
+          <option value="">Rang A + B</option>
+          <option value="A">Rang A</option>
+          <option value="B">Rang B</option>
+        </select>
+      </div>
+      <div id="browse-count" class="small text-muted" style="margin-bottom:8px"></div>
+      <div style="overflow-x:auto">
+        <table class="browse">
+          <thead><tr><th>Deck</th><th>Rang</th><th>Question</th><th>Statut</th><th></th></tr></thead>
+          <tbody id="browse-rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-add" style="display:none">
+    <div class="card">
+      <h2 class="mt0">Nouvelle carte</h2>
+      <p class="small text-muted">Chaque erreur mérite une carte : c'est le matériau le plus utile de tout le deck.</p>
+      <div class="field">
+        <label>Spécialité</label>
+        <select id="add-deck"></select>
+      </div>
+      <div class="field">
+        <label>Rang</label>
+        <select id="add-rang">
+          <option value="A">Rang A</option>
+          <option value="B">Rang B</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Question (recto)</label>
+        <textarea id="add-question" placeholder="Ex : Quels sont les critères de gravité de…"></textarea>
+      </div>
+      <div class="field">
+        <label>Réponse (verso)</label>
+        <textarea id="add-answer" placeholder="Réponse synthétique, recoupée avec LiSA / le référentiel"></textarea>
+      </div>
+      <div class="field">
+        <label>Tags (séparés par des virgules)</label>
+        <input type="text" id="add-tags" placeholder="ex : urgence, score" />
+      </div>
+      <button class="primary" id="add-submit" style="margin-top:16px">Ajouter la carte</button>
+    </div>
+
+    <div class="card">
+      <h2 class="mt0">Mes cartes ajoutées</h2>
+      <div id="custom-cards-list"></div>
+    </div>
+  </section>
+</main>
+
+<footer></footer>
+
+<script type="module">
+import {
+  loadAllCards, loadPlanning, getSrsState, isDue, reviewCard, todayISO,
+  addCustomCard, getCustomCards, deleteCustomCard, renderTopbar, toast
+} from "./js/app.js";
+
+let DECKS = [];
+let ALL_CARDS = [];
+let state = getSrsState();
+const iso = todayISO();
+
+// ---------- Tabs ----------
+document.querySelectorAll(".tab-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("primary"));
+    btn.classList.add("primary");
+    ["review", "browse", "add"].forEach((t) => {
+      document.getElementById("tab-" + t).style.display = t === btn.dataset.tab ? "" : "none";
+    });
+    if (btn.dataset.tab === "browse") renderBrowse();
+    if (btn.dataset.tab === "add") renderCustomList();
+  });
+});
+
+function deckMap() {
+  const m = {};
+  DECKS.forEach((d) => (m[d.cle] = d));
+  return m;
+}
+
+function fillDeckSelects() {
+  const dm = deckMap();
+  const opts = DECKS.map((d) => `<option value="${d.cle}">${d.nom}</option>`).join("");
+  document.getElementById("review-deck-filter").innerHTML += opts;
+  document.getElementById("browse-deck-filter").innerHTML += opts;
+  document.getElementById("add-deck").innerHTML = opts;
+}
+
+// ---------- Review ----------
+let queue = [];
+let qIndex = 0;
+let showingAnswer = false;
+
+function currentFilters() {
+  return {
+    deck: document.getElementById("review-deck-filter").value,
+    rang: document.getElementById("review-rang-filter").value,
+  };
+}
+
+function buildQueue() {
+  const { deck, rang } = currentFilters();
+  let due = ALL_CARDS.filter((c) => isDue(c.id, state, iso));
+  if (deck) due = due.filter((c) => c.deck === deck);
+  if (rang) due = due.filter((c) => c.rang === rang);
+  // Rang A first, then oldest-due first
+  due.sort((a, b) => {
+    if (a.rang !== b.rang) return a.rang === "A" ? -1 : 1;
+    const da = state[a.id]?.due || "0000";
+    const db = state[b.id]?.due || "0000";
+    return da.localeCompare(db);
+  });
+  return due;
+}
+
+function renderReviewSummary() {
+  document.getElementById("review-summary").textContent = `${queue.length} carte(s) due(s) aujourd'hui`;
+}
+
+function renderReviewArea() {
+  const area = document.getElementById("review-area");
+  if (qIndex >= queue.length) {
+    area.innerHTML = `
+      <div class="card empty-state">
+        <div class="big">✅</div>
+        <h3>Rien de dû pour l'instant</h3>
+        <p class="small">Reviens plus tard, ou élargis les filtres pour parcourir en avance.</p>
+      </div>`;
+    return;
+  }
+  const card = queue[qIndex];
+  const dm = deckMap();
+  const deck = dm[card.deck] || { nom: card.deck, couleur: "#999" };
+
+  area.innerHTML = `
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <span class="deck-tag"><span class="deck-dot" style="background:${deck.couleur}"></span>${deck.nom}</span>
+        <span class="pill rang${card.rang}">Rang ${card.rang}</span>
+      </div>
+      <div class="flash-wrap">
+        <div class="flashcard ${showingAnswer ? "answer" : ""}" id="flashcard">
+          <span class="side-label">${showingAnswer ? "Réponse" : "Question"}</span>
+          <div class="text">${showingAnswer ? card.answer : card.question}</div>
+          ${!showingAnswer ? `<span class="hint">Clique pour révéler la réponse</span>` : ""}
+        </div>
+      </div>
+      ${
+        showingAnswer
+          ? `<div class="rate-row">
+              <button class="rate-again" data-q="0">Revoir<span class="k">encore</span></button>
+              <button class="rate-hard" data-q="1">Difficile<span class="k">demain</span></button>
+              <button class="rate-good" data-q="2">Correct<span class="k">bientôt</span></button>
+              <button class="rate-easy" data-q="3">Facile<span class="k">plus tard</span></button>
+            </div>`
+          : ""
+      }
+      <p class="small text-muted" style="margin-top:12px">${qIndex + 1} / ${queue.length} · tags : ${(card.tags || []).join(", ") || "—"}</p>
+    </div>
+  `;
+
+  const fc = document.getElementById("flashcard");
+  fc.addEventListener("click", () => {
+    if (!showingAnswer) {
+      showingAnswer = true;
+      renderReviewArea();
+    }
+  });
+
+  if (showingAnswer) {
+    document.querySelectorAll(".rate-row button").forEach((b) => {
+      b.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const q = parseInt(b.dataset.q, 10);
+        reviewCard(card.id, q, state, iso);
+        showingAnswer = false;
+        qIndex += 1;
+        renderReviewSummary();
+        renderReviewArea();
+      });
+    });
+  }
+}
+
+function startReview() {
+  queue = buildQueue();
+  qIndex = 0;
+  showingAnswer = false;
+  renderReviewSummary();
+  renderReviewArea();
+}
+
+document.getElementById("review-deck-filter").addEventListener("change", startReview);
+document.getElementById("review-rang-filter").addEventListener("change", startReview);
+
+// ---------- Browse ----------
+function renderBrowse() {
+  const search = document.getElementById("browse-search").value.trim().toLowerCase();
+  const deck = document.getElementById("browse-deck-filter").value;
+  const rang = document.getElementById("browse-rang-filter").value;
+  const dm = deckMap();
+
+  let list = ALL_CARDS.slice();
+  if (deck) list = list.filter((c) => c.deck === deck);
+  if (rang) list = list.filter((c) => c.rang === rang);
+  if (search)
+    list = list.filter(
+      (c) =>
+        c.question.toLowerCase().includes(search) ||
+        c.answer.toLowerCase().includes(search) ||
+        (c.tags || []).some((t) => t.toLowerCase().includes(search))
+    );
+
+  document.getElementById("browse-count").textContent = `${list.length} carte(s)`;
+
+  document.getElementById("browse-rows").innerHTML = list
+    .map((c) => {
+      const d = dm[c.deck] || { nom: c.deck, couleur: "#999" };
+      const s = state[c.id];
+      const status = !s ? "Jamais vue" : s.due > iso ? `Revue (due ${s.due})` : "Due";
+      const isCustom = c.id.startsWith("custom-");
+      return `<tr>
+        <td><span class="deck-tag"><span class="deck-dot" style="background:${d.couleur}"></span>${d.nom}</span></td>
+        <td><span class="pill rang${c.rang}">${c.rang}</span></td>
+        <td>${c.question}</td>
+        <td class="small text-muted">${status}</td>
+        <td>${isCustom ? `<button class="ghost del-custom small" data-id="${c.id}">Suppr.</button>` : ""}</td>
+      </tr>`;
+    })
+    .join("");
+
+  document.querySelectorAll(".del-custom").forEach((b) =>
+    b.addEventListener("click", async () => {
+      deleteCustomCard(b.dataset.id);
+      await refreshCards();
+      renderBrowse();
+      toast("Carte supprimée");
+    })
+  );
+}
+
+document.getElementById("browse-search").addEventListener("input", renderBrowse);
+document.getElementById("browse-deck-filter").addEventListener("change", renderBrowse);
+document.getElementById("browse-rang-filter").addEventListener("change", renderBrowse);
+
+// ---------- Add ----------
+document.getElementById("add-submit").addEventListener("click", async () => {
+  const question = document.getElementById("add-question").value.trim();
+  const answer = document.getElementById("add-answer").value.trim();
+  if (!question || !answer) {
+    toast("Question et réponse sont requises");
+    return;
+  }
+  const deck = document.getElementById("add-deck").value;
+  const rang = document.getElementById("add-rang").value;
+  const tags = document.getElementById("add-tags").value.split(",").map((t) => t.trim()).filter(Boolean);
+  addCustomCard({ deck, rang, question, answer, tags });
+  document.getElementById("add-question").value = "";
+  document.getElementById("add-answer").value = "";
+  document.getElementById("add-tags").value = "";
+  await refreshCards();
+  renderCustomList();
+  toast("Carte ajoutée");
+});
+
+function renderCustomList() {
+  const list = getCustomCards();
+  const dm = deckMap();
+  const el = document.getElementById("custom-cards-list");
+  if (list.length === 0) {
+    el.innerHTML = `<p class="small text-muted">Aucune carte personnelle pour l'instant.</p>`;
+    return;
+  }
+  el.innerHTML = list
+    .slice()
+    .reverse()
+    .map((c) => {
+      const d = dm[c.deck] || { nom: c.deck, couleur: "#999" };
+      return `<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+        <span class="deck-tag"><span class="deck-dot" style="background:${d.couleur}"></span>${d.nom}</span>
+        <span class="pill rang${c.rang}">${c.rang}</span>
+        <button class="ghost del-custom small" data-id="${c.id}" style="float:right">Supprimer</button>
+        <p style="margin:6px 0 0"><strong>${c.question}</strong></p>
+        <p class="small text-muted" style="margin:2px 0 0">${c.answer}</p>
+      </div>`;
+    })
+    .join("");
+  document.querySelectorAll("#custom-cards-list .del-custom").forEach((b) =>
+    b.addEventListener("click", async () => {
+      deleteCustomCard(b.dataset.id);
+      await refreshCards();
+      renderCustomList();
+      toast("Carte supprimée");
+    })
+  );
+}
+
+async function refreshCards() {
+  const { decks, cards } = await loadAllCards();
+  DECKS = decks;
+  ALL_CARDS = cards;
+  state = getSrsState();
+}
+
+async function init() {
+  const planning = await loadPlanning();
+  renderTopbar("cartes.html", planning);
+  await refreshCards();
+  fillDeckSelects();
+  startReview();
+}
+
+init().catch((e) => {
+  console.error(e);
+  toast("Erreur de chargement des cartes");
+});
+</script>
+</body>
+</html>

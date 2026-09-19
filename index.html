@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sophie · Coach de révision EDN</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="topbar" class="topbar"></div>
+
+<main>
+  <div class="card" id="hero-card">
+    <h1 class="mt0" id="hero-title">Chargement…</h1>
+    <p class="text-muted" id="hero-sub"></p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h2>Aujourd'hui</h2>
+      <div id="today-block">Chargement du planning…</div>
+    </div>
+    <div class="card">
+      <h2>Cartes à réviser</h2>
+      <div id="cards-block">Chargement des cartes…</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Avancement par spécialité</h2>
+    <div id="deck-progress"></div>
+  </div>
+
+  <div class="card">
+    <h2 class="mt0">Repères</h2>
+    <div class="stat-row" id="repere-stats"></div>
+  </div>
+</main>
+
+<footer>Site statique — les données restent dans ce navigateur. Pense à exporter une sauvegarde depuis la page Journal.</footer>
+
+<script type="module">
+import {
+  loadPlanning, loadAllCards, getSrsState, isDue, todayISO,
+  formatDateFR, renderTopbar, daysBetween, toast
+} from "./js/app.js";
+
+const iso = todayISO();
+
+async function init() {
+  const planning = await loadPlanning();
+  renderTopbar("index.html", planning);
+
+  const heroTitle = document.getElementById("hero-title");
+  const heroSub = document.getElementById("hero-sub");
+  const firstExam = planning.meta.cible_principale.dates[0];
+  const diff = daysBetween(iso, firstExam);
+  heroTitle.textContent = diff > 0 ? `${diff} jours avant l'EDN` : "Semaine des épreuves EDN";
+  heroSub.textContent = formatDateFR(iso) + " — " + planning.meta.principe_directeur;
+
+  renderToday(planning);
+  await renderCards();
+  renderRepere(planning);
+}
+
+function renderToday(planning) {
+  const block = document.getElementById("today-block");
+  const jour = planning.phase_1.jours.find((j) => j.date === iso);
+
+  if (jour) {
+    block.innerHTML = `
+      <div class="pill">Jour ${jour.j}</div>
+      <span class="charge-badge charge-${jour.charge.replace(/\s|é/g, (m) => (m === " " ? "-" : "e"))}">${jour.charge}</span>
+      <p style="margin-top:10px"><strong>Principal —</strong> ${jour.principal}</p>
+      <p><strong>Secondaire —</strong> ${jour.secondaire}</p>
+      <p><strong>Entraînement —</strong> ${jour.entrainement}</p>
+      ${jour.note ? `<p class="note" style="color:var(--accent-dark);font-style:italic">${jour.note}</p>` : ""}
+      <a href="planning.html" class="btn" style="margin-top:8px;display:inline-block">Voir le planning complet →</a>
+    `;
+  } else {
+    const beforeStart = iso < planning.phase_1.jours[0].date;
+    const afterEnd = iso > planning.phase_1.jours[planning.phase_1.jours.length - 1].date;
+    if (beforeStart) {
+      block.innerHTML = `<p>Le sprint commence le ${formatDateFR(planning.phase_1.jours[0].date)}.</p>`;
+    } else if (afterEnd) {
+      block.innerHTML = `<p>Le sprint rang A est terminé. Consulte la page Planning pour les consignes des jours d'épreuve.</p><a href="planning.html" class="btn">Voir le planning →</a>`;
+    } else {
+      block.innerHTML = `<p>Journée hors planning détaillé (phase filet janvier). Consulte la page Planning.</p>`;
+    }
+  }
+}
+
+async function renderCards() {
+  const block = document.getElementById("cards-block");
+  const { cards } = await loadAllCards();
+  const state = getSrsState();
+  const due = cards.filter((c) => isDue(c.id, state, iso));
+  const dueA = due.filter((c) => c.rang === "A").length;
+  const dueB = due.filter((c) => c.rang === "B").length;
+  const neverSeen = cards.filter((c) => !state[c.id]).length;
+
+  block.innerHTML = `
+    <div class="stat-row">
+      <div class="stat"><div class="num">${due.length}</div><div class="label">Dues aujourd'hui</div></div>
+      <div class="stat"><div class="num">${dueA}</div><div class="label">Rang A dues</div></div>
+      <div class="stat"><div class="num">${neverSeen}</div><div class="label">Jamais vues</div></div>
+    </div>
+    <a href="cartes.html" class="btn primary" style="margin-top:14px;display:inline-block">
+      ${due.length > 0 ? `Réviser les ${due.length} cartes dues →` : "Parcourir les cartes →"}
+    </a>
+  `;
+}
+
+function renderRepere(planning) {
+  const el = document.getElementById("repere-stats");
+  const d = planning.meta.cible_principale.detail;
+  el.innerHTML = d
+    .map(
+      (e) => `<div class="stat">
+        <div class="num" style="font-size:15px">${e.epreuve}</div>
+        <div class="label">${new Date(e.date + "T00:00:00").toLocaleDateString("fr-FR", { day: "2-digit", month: "short" })} · ${e.horaire}</div>
+      </div>`
+    )
+    .join("");
+}
+
+// Deck progress uses cartes data + srs state
+async function renderDeckProgress() {
+  const el = document.getElementById("deck-progress");
+  const { decks, cards } = await loadAllCards();
+  const state = getSrsState();
+  el.innerHTML = decks
+    .map((d) => {
+      const deckCards = cards.filter((c) => c.deck === d.cle);
+      if (deckCards.length === 0) return "";
+      const seen = deckCards.filter((c) => state[c.id]).length;
+      const pct = Math.round((seen / deckCards.length) * 100);
+      return `
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
+            <span class="deck-tag"><span class="deck-dot" style="background:${d.couleur}"></span>${d.nom}</span>
+            <span class="text-muted">${seen}/${deckCards.length}</span>
+          </div>
+          <div class="progress-bar"><div class="fill" style="width:${pct}%;background:${d.couleur}"></div></div>
+        </div>`;
+    })
+    .join("");
+}
+
+init().then(renderDeckProgress).catch((e) => {
+  console.error(e);
+  toast("Erreur de chargement des données");
+});
+</script>
+</body>
+</html>
