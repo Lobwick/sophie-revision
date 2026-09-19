@@ -43,11 +43,11 @@
 <script type="module">
 import {
   loadPlanning, renderTopbar, getJournal, addJournalEntry, deleteJournalEntry,
-  exportBackup, importBackup, formatDateFR, toast
+  exportBackup, importBackup, formatDateFR, toast, initData
 } from "./js/app.js";
 
 async function init() {
-  const planning = await loadPlanning();
+  const [planning] = await Promise.all([loadPlanning(), initData()]);
   renderTopbar("journal.html", planning);
   renderEntries();
 }
@@ -70,8 +70,8 @@ function renderEntries() {
     )
     .join("");
   document.querySelectorAll(".journal-entry .del").forEach((b) =>
-    b.addEventListener("click", () => {
-      deleteJournalEntry(b.dataset.id);
+    b.addEventListener("click", async () => {
+      await deleteJournalEntry(b.dataset.id);
       renderEntries();
       toast("Entrée supprimée");
     })
@@ -84,11 +84,11 @@ function escapeHtml(s) {
   return div.innerHTML;
 }
 
-document.getElementById("add-entry").addEventListener("click", () => {
+document.getElementById("add-entry").addEventListener("click", async () => {
   const ta = document.getElementById("new-entry");
   const text = ta.value.trim();
   if (!text) return;
-  addJournalEntry(text);
+  await addJournalEntry(text);
   ta.value = "";
   renderEntries();
   toast("Ajouté au journal");
@@ -105,7 +105,7 @@ document.getElementById("import-input").addEventListener("change", async (e) => 
   try {
     const text = await file.text();
     const obj = JSON.parse(text);
-    importBackup(obj);
+    await importBackup(obj);
     renderEntries();
     toast("Sauvegarde importée");
   } catch (err) {

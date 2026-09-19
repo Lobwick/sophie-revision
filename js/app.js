@@ -1,10 +1,8 @@
-// Utilitaires partagés : chargement des données, stockage local, SRS, navigation.
-
-const LS_KEYS = {
-  srs: "sophie_srs_state_v1",
-  customCards: "sophie_custom_cards_v1",
-  journal: "sophie_journal_v1",
-};
+// Utilitaires partagés : chargement des données, persistance via l'API serveur, SRS, navigation.
+//
+// Les données mutables (progression SRS, cartes personnelles, journal) ne sont PAS stockées dans
+// le navigateur : elles vivent côté serveur (fichier JSON dans un volume Docker), via /api/*.
+// initData() doit être appelée une fois par page, avant tout appel à getSrsState/getCustomCards/getJournal.
 
 export function todayISO() {
   const d = new Date();
@@ -28,7 +26,7 @@ export function formatDateShort(iso) {
   return d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" });
 }
 
-// ---------- Data loading ----------
+// ---------- Data loading (contenu statique de référence, versionné avec le site) ----------
 
 let _planningCache = null;
 let _cartesCache = null;
@@ -53,30 +51,78 @@ export async function loadAllCards() {
   return { decks: base.decks, cards: [...base.cards, ...custom], meta: base.meta };
 }
 
-// ---------- LocalStorage: SRS state ----------
-
-function safeParse(raw, fallback) {
+// Gardes connues, synchronisées côté serveur depuis le calendrier iCloud partagé.
+// { updated_at, gardes: [{debut_date, debut_time, fin_date, fin_time, jour_recuperation}], enabled, error }
+export async function loadGardes() {
   try {
-    const v = JSON.parse(raw);
-    return v ?? fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-export function getSrsState() {
-  return safeParse(localStorage.getItem(LS_KEYS.srs), {});
-}
-
-export function saveSrsState(state) {
-  try {
-    localStorage.setItem(LS_KEYS.srs, JSON.stringify(state));
+    const res = await fetch("/api/gardes");
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
   } catch (e) {
-    console.error("Impossible d'enregistrer la progression", e);
+    console.error("Impossible de charger les gardes synchronisées :", e);
+    return { updated_at: null, gardes: [], enabled: false, error: String(e) };
   }
 }
+
+// Gardes dont la période (ou le jour de récupération) touche la semaine [debut, fin] (ISO).
+export function gardesInRange(gardes, debut, fin) {
+  return gardes.filter((g) => g.debut_date <= fin && g.jour_recuperation >= debut);
+}
+
+// ---------- Données mutables : cache mémoire synchronisé avec le serveur ----------
+
+let _cache = null; // { srs: {}, customCards: [], journal: [] }
+let _cachePromise = null;
+
+async function fetchJSON(url, opts) {
+  const res = await fetch(url, opts);
+  if (!res.ok) {
+    let detail = "";
+    try {
+      detail = (await res.json()).error || "";
+    } catch {
+      // ignore
+    }
+    throw new Error(`${url} → HTTP ${res.status}${detail ? " — " + detail : ""}`);
+  }
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
+}
+
+// À appeler une fois par page, avant tout getSrsState()/getCustomCards()/getJournal().
+export async function initData() {
+  if (_cache) return _cache;
+  if (!_cachePromise) {
+    _cachePromise = fetchJSON("/api/data")
+      .then((d) => {
+        _cache = { srs: d.srs || {}, customCards: d.customCards || [], journal: d.journal || [] };
+        return _cache;
+      })
+      .catch((e) => {
+        console.error("Impossible de charger les données depuis le serveur :", e);
+        toast("Serveur de données injoignable — vérifie que le conteneur tourne");
+        _cache = { srs: {}, customCards: [], journal: [] };
+        return _cache;
+      });
+  }
+  return _cachePromise;
+}
+
+function cache() {
+  if (!_cache) {
+    console.warn("initData() n'a pas encore été appelée : cache vide utilisé par défaut");
+    _cache = { srs: {}, customCards: [], journal: [] };
+  }
+  return _cache;
+}
+
+// ---------- SRS (répétition espacée, SM-2 simplifié) ----------
 
 const INTERVALS = [0, 1, 3, 7, 16];
+
+export function getSrsState() {
+  return cache().srs;
+}
 
 export function isDue(cardId, state, refDateISO) {
   const s = state[cardId];
@@ -85,6 +131,8 @@ export function isDue(cardId, state, refDateISO) {
 }
 
 // quality: 0=again 1=hard 2=good 3=easy
+// Met à jour `state` en mémoire immédiatement (l'UI reste réactive) et persiste sur le serveur
+// en arrière-plan ; state est censé être le même objet que celui retourné par getSrsState().
 export function reviewCard(cardId, quality, state, refDateISO) {
   const prev = state[cardId] || { ease: 2.5, intervalIdx: -1, interval: 0, reps: 0, lapses: 0 };
   const s = { ...prev };
@@ -110,57 +158,73 @@ export function reviewCard(cardId, quality, state, refDateISO) {
   s.due = new Date(dueDate - tz).toISOString().slice(0, 10);
   s.last = refDateISO;
   state[cardId] = s;
-  saveSrsState(state);
+
+  fetchJSON("/api/srs", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ cardId, record: s }),
+  }).catch((e) => {
+    console.error("Échec de sauvegarde de la progression", e);
+    toast("Progression non sauvegardée (serveur injoignable)");
+  });
+
   return s;
 }
 
-// ---------- LocalStorage: custom cards ----------
+// ---------- Cartes personnelles ----------
 
 export function getCustomCards() {
-  return safeParse(localStorage.getItem(LS_KEYS.customCards), []);
+  return cache().customCards;
 }
 
-export function addCustomCard(card) {
-  const cards = getCustomCards();
-  const id = "custom-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-  const full = { id, srs: null, item: "", tags: [], ...card };
-  cards.push(full);
-  localStorage.setItem(LS_KEYS.customCards, JSON.stringify(cards));
-  return full;
+export async function addCustomCard(card) {
+  const created = await fetchJSON("/api/custom-cards", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(card),
+  });
+  cache().customCards.push(created);
+  return created;
 }
 
-export function deleteCustomCard(id) {
-  const cards = getCustomCards().filter((c) => c.id !== id);
-  localStorage.setItem(LS_KEYS.customCards, JSON.stringify(cards));
+export async function deleteCustomCard(id) {
+  await fetchJSON(`/api/custom-cards/${encodeURIComponent(id)}`, { method: "DELETE" });
+  const c = cache();
+  c.customCards = c.customCards.filter((x) => x.id !== id);
+  delete c.srs[id];
 }
 
-// ---------- LocalStorage: journal d'erreurs ----------
+// ---------- Journal d'erreurs ----------
 
 export function getJournal() {
-  return safeParse(localStorage.getItem(LS_KEYS.journal), []);
+  return cache().journal;
 }
 
-export function addJournalEntry(text, deck) {
-  const entries = getJournal();
-  const entry = { id: Date.now().toString(36), date: todayISO(), text, deck: deck || null };
-  entries.unshift(entry);
-  localStorage.setItem(LS_KEYS.journal, JSON.stringify(entries));
+export async function addJournalEntry(text, deck) {
+  const entry = await fetchJSON("/api/journal", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text, deck: deck || null }),
+  });
+  cache().journal.unshift(entry);
   return entry;
 }
 
-export function deleteJournalEntry(id) {
-  const entries = getJournal().filter((e) => e.id !== id);
-  localStorage.setItem(LS_KEYS.journal, JSON.stringify(entries));
+export async function deleteJournalEntry(id) {
+  await fetchJSON(`/api/journal/${encodeURIComponent(id)}`, { method: "DELETE" });
+  const c = cache();
+  c.journal = c.journal.filter((e) => e.id !== id);
 }
 
-// ---------- Backup export / import ----------
+// ---------- Sauvegarde manuelle (export/import), en plus de la persistance serveur ----------
 
 export function exportBackup() {
+  const c = cache();
   const payload = {
     exported_at: new Date().toISOString(),
-    srs: getSrsState(),
-    customCards: getCustomCards(),
-    journal: getJournal(),
+    srs: c.srs,
+    customCards: c.customCards,
+    journal: c.journal,
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
@@ -173,23 +237,36 @@ export function exportBackup() {
   URL.revokeObjectURL(url);
 }
 
-export function importBackup(obj) {
-  if (obj.srs) localStorage.setItem(LS_KEYS.srs, JSON.stringify(obj.srs));
-  if (obj.customCards) localStorage.setItem(LS_KEYS.customCards, JSON.stringify(obj.customCards));
-  if (obj.journal) localStorage.setItem(LS_KEYS.journal, JSON.stringify(obj.journal));
+export async function importBackup(obj) {
+  const saved = await fetchJSON("/api/import", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(obj),
+  });
+  _cache = { srs: saved.srs || {}, customCards: saved.customCards || [], journal: saved.journal || [] };
 }
 
 // ---------- Countdown / exam info ----------
 
+// Trouve la semaine de phase_partiel.semaines qui contient la date ISO donnée (ou null).
+export function findCurrentWeek(planning, iso) {
+  return planning.phase_partiel.semaines.find((s) => iso >= s.debut && iso <= s.fin) || null;
+}
+
 export function examCountdownLabel(planning) {
   const iso = todayISO();
-  const firstExam = planning.meta.cible_principale.dates[0];
-  const diff = daysBetween(iso, firstExam);
-  if (diff > 0) return `J-${diff} avant l'EDN`;
-  if (diff === 0) return "Jour J — 1re épreuve aujourd'hui";
-  const lastExam = planning.meta.cible_principale.dates[planning.meta.cible_principale.dates.length - 1];
-  if (iso <= lastExam) return "Épreuves EDN en cours";
-  return "Épreuves EDN terminées";
+  const partiel = planning.meta.cible_immediate;
+  const diffPartiel = daysBetween(iso, partiel.date);
+  if (diffPartiel > 0) return `J-${diffPartiel} avant le partiel`;
+  if (diffPartiel === 0) return "Jour J — partiel aujourd'hui";
+
+  const edn = planning.meta.cible_principale;
+  const estDate = edn.date_estimee_ordre_de_grandeur;
+  if (estDate) {
+    const diffEdn = daysBetween(iso, estDate);
+    if (diffEdn > 0) return `~J-${diffEdn} avant l'EDN (estimation)`;
+  }
+  return "EDN — dates à confirmer";
 }
 
 // ---------- Toast ----------

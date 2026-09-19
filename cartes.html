@@ -99,7 +99,7 @@
 <script type="module">
 import {
   loadAllCards, loadPlanning, getSrsState, isDue, reviewCard, todayISO,
-  addCustomCard, getCustomCards, deleteCustomCard, renderTopbar, toast
+  addCustomCard, getCustomCards, deleteCustomCard, renderTopbar, toast, initData
 } from "./js/app.js";
 
 let DECKS = [];
@@ -279,7 +279,7 @@ function renderBrowse() {
 
   document.querySelectorAll(".del-custom").forEach((b) =>
     b.addEventListener("click", async () => {
-      deleteCustomCard(b.dataset.id);
+      await deleteCustomCard(b.dataset.id);
       await refreshCards();
       renderBrowse();
       toast("Carte supprimée");
@@ -302,7 +302,7 @@ document.getElementById("add-submit").addEventListener("click", async () => {
   const deck = document.getElementById("add-deck").value;
   const rang = document.getElementById("add-rang").value;
   const tags = document.getElementById("add-tags").value.split(",").map((t) => t.trim()).filter(Boolean);
-  addCustomCard({ deck, rang, question, answer, tags });
+  await addCustomCard({ deck, rang, question, answer, tags });
   document.getElementById("add-question").value = "";
   document.getElementById("add-answer").value = "";
   document.getElementById("add-tags").value = "";
@@ -335,7 +335,7 @@ function renderCustomList() {
     .join("");
   document.querySelectorAll("#custom-cards-list .del-custom").forEach((b) =>
     b.addEventListener("click", async () => {
-      deleteCustomCard(b.dataset.id);
+      await deleteCustomCard(b.dataset.id);
       await refreshCards();
       renderCustomList();
       toast("Carte supprimée");
@@ -351,7 +351,7 @@ async function refreshCards() {
 }
 
 async function init() {
-  const planning = await loadPlanning();
+  const [planning] = await Promise.all([loadPlanning(), initData()]);
   renderTopbar("cartes.html", planning);
   await refreshCards();
   fillDeckSelects();

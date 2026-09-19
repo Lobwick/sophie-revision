@@ -1,0 +1,13 @@
+{
+  "name": "sophie-revision-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Serveur statique + API de persistance pour le site de révision de Sophie",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

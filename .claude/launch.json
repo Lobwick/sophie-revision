@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "sophie-revision",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8811"],
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "PORT=8811 DB_PATH=db/store.json CALENDAR_ICS_URL=webcal://p136-caldav.icloud.com/published/2/MTM2NTIwODY1MzEzNjUyMPUB1g3WgpeTnHDv0Ugq6hjg2s94zj4IdsyNv65-Uan1a-cE7a77K1OKH5LeFrcyEdkTLr_JViskZESfZVUwEKY node server/server.js"],
       "port": 8811
     }
   ]

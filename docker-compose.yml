@@ -1,0 +1,17 @@
+services:
+  sophie-revision:
+    build: .
+    image: sophie-revision:latest
+    container_name: sophie-revision
+    restart: unless-stopped
+    ports:
+      - "8811:8080"
+    volumes:
+      - sophie_data:/app/db
+    environment:
+      - PORT=8080
+      - DB_PATH=/app/db/store.json
+      - CALENDAR_ICS_URL=webcal://p136-caldav.icloud.com/published/2/MTM2NTIwODY1MzEzNjUyMPUB1g3WgpeTnHDv0Ugq6hjg2s94zj4IdsyNv65-Uan1a-cE7a77K1OKH5LeFrcyEdkTLr_JViskZESfZVUwEKY
+
+volumes:
+  sophie_data:

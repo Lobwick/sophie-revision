@@ -11,31 +11,47 @@
 
 <main>
   <div class="card">
-    <h1 class="mt0" id="phase-title">Sprint rang A</h1>
+    <h1 class="mt0" id="phase-title">Préparation du partiel</h1>
     <p class="text-muted" id="phase-sub"></p>
+    <p class="small text-muted" id="phase-contraintes"></p>
   </div>
 
   <div class="card">
-    <h2>Journée type (7 h)</h2>
-    <div id="template-blocks"></div>
+    <h2>Objectif immédiat — confirmé</h2>
+    <div id="cible-immediate"></div>
   </div>
 
   <div class="card">
-    <h2>Les 23 jours</h2>
-    <div id="days-list"></div>
+    <h2>Rythme hebdomadaire type</h2>
+    <div id="template-semaine"></div>
   </div>
 
   <div class="card">
-    <h2>Jours d'épreuve (12 → 15 octobre)</h2>
-    <div id="exam-days"></div>
-    <h3>Règles</h3>
+    <h2>Les 22 semaines jusqu'au partiel</h2>
+    <div id="semaines-list"></div>
+  </div>
+
+  <div class="card">
+    <h2>Après le partiel : tour EDN complet</h2>
+    <div class="warn-box" id="edn-warn"></div>
+    <div id="edn-tour-structure"></div>
+  </div>
+
+  <div class="card">
+    <h3 class="mt0">Journée type du sprint final (avant l'EDN)</h3>
+    <p class="small text-muted" id="sprint-usage"></p>
+    <div id="template-sprint-blocks"></div>
+  </div>
+
+  <div class="card">
+    <h2>Jours d'épreuve EDN <span class="badge-warn">dates à confirmer</span></h2>
     <ul class="rule-list" id="exam-rules"></ul>
   </div>
 
   <div class="card">
-    <h2>Filet de janvier</h2>
-    <p class="small text-muted" id="phase3-condition"></p>
-    <div id="phase3-blocks"></div>
+    <h2>Filet — seconde session <span class="badge-warn">dates à confirmer</span></h2>
+    <p class="small text-muted" id="rattrapage-condition"></p>
+    <div id="rattrapage-blocks"></div>
   </div>
 
   <div class="card">
@@ -47,22 +63,73 @@
 <footer></footer>
 
 <script type="module">
-import { loadPlanning, renderTopbar, todayISO, formatDateShort } from "./js/app.js";
+import { loadPlanning, renderTopbar, todayISO, formatDateShort, formatDateFR, loadGardes, gardesInRange } from "./js/app.js";
 
 const iso = todayISO();
 
-function chargeClass(charge) {
-  return "charge-" + charge.replace(/\s/g, "-").replace(/é/g, "e");
-}
-
 async function init() {
-  const planning = await loadPlanning();
+  const [planning, gardesData] = await Promise.all([loadPlanning(), loadGardes()]);
   renderTopbar("planning.html", planning);
 
-  document.getElementById("phase-title").textContent = planning.phase_1.libelle;
+  document.getElementById("phase-title").textContent = planning.phase_partiel.libelle;
   document.getElementById("phase-sub").textContent = planning.meta.principe_directeur;
+  document.getElementById("phase-contraintes").textContent =
+    planning.meta.contraintes + " Rythme visé : " + planning.meta.rythme_hebdo_heures + ". " + planning.meta.repartition_phase_partiel;
 
-  document.getElementById("template-blocks").innerHTML = planning.template_journee.blocs
+  // Objectif immédiat
+  const ci = planning.meta.cible_immediate;
+  document.getElementById("cible-immediate").innerHTML = `
+    <p><strong>${ci.nom}</strong></p>
+    <p class="small text-muted">${formatDateFR(ci.date)}</p>
+    <div style="margin-top:8px">${ci.matieres.map((m) => `<span class="pill">${m}</span>`).join(" ")}</div>
+  `;
+
+  // Rythme hebdo
+  const t = planning.phase_partiel.template_semaine;
+  document.getElementById("template-semaine").innerHTML = `
+    <p><strong>Volume —</strong> ${t.heures_semaine} <span class="text-muted small">(${t.repartition})</span></p>
+    <p><strong>Structure —</strong> ${t.structure_type}</p>
+    <div class="warn-box">🩹 ${t.regle_gardes}</div>
+    <div class="warn-box">🏥 ${t.regle_stage}</div>
+    <p class="small text-muted" style="margin-top:10px">${gardesStatusLabel(gardesData)}</p>
+  `;
+
+  // Semaines
+  const gardes = gardesData.gardes || [];
+  document.getElementById("semaines-list").innerHTML = planning.phase_partiel.semaines
+    .map((s) => {
+      const rowClass = iso >= s.debut && iso <= s.fin ? "today" : s.fin < iso ? "past" : "";
+      const semaineGardes = gardesInRange(gardes, s.debut, s.fin);
+      return `
+      <div class="day-row ${rowClass}">
+        <div class="day-num"><div class="n">${s.s}</div><div class="d">${formatDateShort(s.debut)}</div></div>
+        <div class="day-body">
+          <div class="principal">${s.matiere}${s.vacances ? `<span class="badge-vacances">vacances</span>` : ""}</div>
+          <div class="meta">${s.sujet}</div>
+          ${s.edn_transversal ? `<div class="meta">Fil rouge EDN (≈20%) : ${s.edn_transversal}</div>` : ""}
+          ${semaineGardes.map((g) => `<div class="meta">🩹 Garde le ${formatDateShort(g.debut_date)} → jour allégé le ${formatDateShort(g.jour_recuperation)}</div>`).join("")}
+          ${s.note ? `<div class="note">${s.note}</div>` : ""}
+        </div>
+      </div>`;
+    })
+    .join("");
+
+  // Tour EDN
+  const edn = planning.meta.cible_principale;
+  document.getElementById("edn-warn").textContent = edn.statut_dates;
+  document.getElementById("edn-tour-structure").innerHTML =
+    planning.phase_edn_tour.structure
+      .map(
+        (b) => `<div style="padding:8px 0;border-bottom:1px solid var(--border)">
+          <strong>${b.bloc}</strong> <span class="pill">${b.duree_semaines} sem.</span>
+          <p style="margin:4px 0 0" class="small">${b.contenu}</p>
+        </div>`
+      )
+      .join("") + `<p class="small text-muted" style="margin-top:10px">${planning.phase_edn_tour.note}</p>`;
+
+  // Journée type du sprint final
+  document.getElementById("sprint-usage").textContent = planning.template_journee_sprint.usage;
+  document.getElementById("template-sprint-blocks").innerHTML = planning.template_journee_sprint.blocs
     .map(
       (b) => `
       <div style="padding:10px 0;border-bottom:1px solid var(--border)">
@@ -73,54 +140,36 @@ async function init() {
     )
     .join("");
 
-  document.getElementById("days-list").innerHTML = planning.phase_1.jours
-    .map((j) => {
-      const rowClass = j.date === iso ? "today" : j.date < iso ? "past" : "";
-      const dow = new Date(j.date + "T00:00:00").toLocaleDateString("fr-FR", { weekday: "short" });
-      return `
-      <div class="day-row ${rowClass}">
-        <div class="day-num"><div class="n">${j.j}</div><div class="d">${dow} ${formatDateShort(j.date)}</div></div>
-        <div class="day-body">
-          <div class="principal">${j.principal}<span class="charge-badge ${chargeClass(j.charge)}">${j.charge}</span></div>
-          <div class="meta">Secondaire : ${j.secondaire}</div>
-          <div class="meta">Entraînement : ${j.entrainement}</div>
-          ${j.note ? `<div class="note">${j.note}</div>` : ""}
-        </div>
-      </div>`;
-    })
-    .join("");
+  // Jours d'épreuve
+  document.getElementById("exam-rules").innerHTML = planning.phase_edn_examen.regles.map((r) => `<li>${r}</li>`).join("");
 
-  document.getElementById("exam-days").innerHTML = `
-    <table class="browse">
-      <thead><tr><th>Date</th><th>Épreuve</th><th>Horaire</th></tr></thead>
-      <tbody>
-        ${planning.meta.cible_principale.detail
-          .map((d) => `<tr><td>${formatDateShort(d.date)}</td><td>${d.epreuve}</td><td>${d.horaire}${d.note ? ` <span class="text-muted small">(${d.note})</span>` : ""}</td></tr>`)
-          .join("")}
-      </tbody>
-    </table>
-    <p class="small text-muted" style="margin-top:10px">Jours de secours : ${planning.meta.cible_principale.secours.map(formatDateShort).join(", ")}</p>
-  `;
-
-  document.getElementById("exam-rules").innerHTML = planning.phase_2.regles.map((r) => `<li>${r}</li>`).join("");
-
-  document.getElementById("phase3-condition").textContent =
-    planning.phase_3.condition_activation + " — période : " + formatDateShort(planning.phase_3.periode[0]) + " → " + formatDateShort(planning.phase_3.periode[1]);
-
-  document.getElementById("phase3-blocks").innerHTML = planning.phase_3.structure
-    .map(
-      (b) => `<div style="padding:8px 0;border-bottom:1px solid var(--border)">
-        <strong>${b.bloc}</strong> <span class="pill">${b.semaines} sem.</span>
-        <p style="margin:4px 0 0" class="small">${b.contenu}</p>
-      </div>`
-    )
-    .join("") + `<p class="small text-muted" style="margin-top:10px">${planning.phase_3.note}</p>`;
+  // Rattrapage
+  document.getElementById("rattrapage-condition").textContent = planning.phase_edn_rattrapage.condition_activation;
+  document.getElementById("rattrapage-blocks").innerHTML =
+    planning.phase_edn_rattrapage.structure
+      .map(
+        (b) => `<div style="padding:8px 0;border-bottom:1px solid var(--border)">
+          <strong>${b.bloc}</strong> <span class="pill">${b.semaines} sem.</span>
+          <p style="margin:4px 0 0" class="small">${b.contenu}</p>
+        </div>`
+      )
+      .join("") + `<p class="small text-muted" style="margin-top:10px">${planning.phase_edn_rattrapage.note}</p>`;
 
   document.getElementById("global-rules").innerHTML = planning.regles_transversales.map((r) => `<li>${r}</li>`).join("");
 
-  // Auto-scroll to today's row
+  // Auto-scroll to current week
   const todayRow = document.querySelector(".day-row.today");
   if (todayRow) setTimeout(() => todayRow.scrollIntoView({ block: "center", behavior: "smooth" }), 300);
+}
+
+function gardesStatusLabel(gardesData) {
+  if (!gardesData.enabled) return "Synchronisation des gardes désactivée (CALENDAR_ICS_URL non configurée côté serveur).";
+  if (gardesData.error && !gardesData.updated_at) return `⚠ Calendrier injoignable (${gardesData.error}).`;
+  const when = gardesData.updated_at
+    ? new Date(gardesData.updated_at).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })
+    : "jamais";
+  const count = (gardesData.gardes || []).length;
+  return `Gardes synchronisées avec le calendrier iCloud — dernière synchro : ${when} (${count} garde(s) connue(s)).`;
 }
 
 init();

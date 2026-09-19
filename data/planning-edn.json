@@ -1,126 +1,375 @@
 {
   "meta": {
-    "version": "1.0",
+    "version": "2.0",
     "genere_le": "2026-09-19",
+    "niveau": "5e année (DFASM2), année universitaire 2026-2027",
+    "contraintes": "Gardes de 24h à l'hôpital (lendemain difficile) et journées de stage à temps plein : le plan doit rester soutenable sur la durée, pas un sprint permanent.",
+    "rythme_hebdo_heures": "10 à 15 h par semaine en moyenne, variable selon les stages et les gardes",
+    "repartition_phase_partiel": "Environ 80% du temps sur les matières du partiel du 16/02, environ 20% en révision transversale EDN rang A en continu (pour ne rien découvrir en mars)",
+    "cible_immediate": {
+      "nom": "Partiel — Ophtalmologie, ORL, Chirurgie maxillo-faciale, Médecine intensive et réanimation, Gériatrie/MPR",
+      "date": "2027-02-16",
+      "matieres": [
+        "Ophtalmologie",
+        "ORL",
+        "Chirurgie maxillo-faciale",
+        "Médecine intensive et réanimation",
+        "Gériatrie, médecine adaptative et de réadaptation"
+      ]
+    },
     "cible_principale": {
-      "nom": "EDN session 1",
-      "dates": ["2026-10-12", "2026-10-13", "2026-10-14", "2026-10-15"],
-      "detail": [
-        { "date": "2026-10-12", "epreuve": "1re unite de composition", "horaire": "15h-18h", "note": "demarrage technique obligatoire a 12h" },
-        { "date": "2026-10-13", "epreuve": "2e unite de composition", "horaire": "14h-17h" },
-        { "date": "2026-10-14", "epreuve": "3e unite de composition", "horaire": "14h-17h" },
-        { "date": "2026-10-15", "epreuve": "LCA (2 unites)", "horaire": "14h-17h" }
-      ],
-      "secours": ["2026-10-16", "2026-10-19"]
+      "nom": "EDN — première session (accès internat, année universitaire 2027-2028)",
+      "a_confirmer": true,
+      "statut_dates": "Dates non publiées à la date de génération de ce planning (19/09/2026). L'arrêté d'ouverture de cette campagne existe (23 mars 2026) mais le calendrier précis des épreuves n'était pas accessible publiquement lors des recherches. Les comptes UFR pour cette campagne ouvrent le 21/09/2026 : les dates exactes devraient être communiquées peu après — à vérifier auprès de la scolarité ou sur le site du CNG et à corriger ici dès qu'elles sont connues.",
+      "date_estimee_ordre_de_grandeur": "2027-10-11",
+      "raisonnement_estimation": "Par analogie avec les campagnes précédentes : mi-octobre, 3 jours de composition (lundi-mercredi) suivis d'un jour de LCA (jeudi), journées de secours les deux jours suivants."
     },
     "cible_secondaire": {
-      "nom": "EDN session 2",
-      "dates": ["2027-01-13", "2027-01-14"],
-      "condition": "Reservee aux candidats n'ayant pas atteint le seuil de 14/20 aux connaissances de rang A en session 1"
+      "nom": "EDN — seconde session (estimée)",
+      "a_confirmer": true,
+      "statut_dates": "Estimée par analogie avec les campagnes précédentes (mi-janvier), à confirmer. Réservée aux candidats n'ayant pas atteint le seuil minimal de rang A en première session.",
+      "periode_estimee_ordre_de_grandeur": "2028-01-12"
     },
-    "volume_quotidien_heures": 7,
-    "principe_directeur": "Le seuil d'acces aux ECOS porte sur le rang A. Toute arbitrage se tranche en faveur du rang A. Le rang B ne se travaille que sur les items a fort rendement.",
-    "jours_restants_phase_1": 23
+    "principe_directeur": "Jusqu'au 16 février 2027 : priorité aux 5 matières du partiel, rang A, avec un fil rouge EDN transversal léger pour ne rien découvrir plus tard. Après le 16 février : bascule complète sur le tour EDN, toujours rang A en priorité — c'est lui qui conditionne le seuil d'accès aux ECOS."
   },
-
-  "template_journee": {
+  "phase_partiel": {
+    "libelle": "Préparation du partiel du 16 février 2027 — 21 septembre 2026 au 15 février 2027 (22 semaines)",
+    "template_semaine": {
+      "heures_semaine": "10 à 15 h",
+      "repartition": "≈80% sur la matière de la semaine (partiel), ≈20% sur un bloc EDN transversal rang A en rotation sur les grandes spécialités EDN",
+      "regle_gardes": "Au lendemain d'une garde de 24h : pas de séance structurée. Cartes dues uniquement, en mode léger (15-20 minutes), sans culpabilité — la garde compte comme une journée de récupération.",
+      "regle_stage": "Les jours de stage à temps plein : le rappel actif du matin ou du soir (cartes dues, 20-30 minutes) suffit. Le gros du travail de fond se fait sur les soirées libres et le week-end.",
+      "structure_type": "Lecture active de la matière de la semaine (fiches + cartes) + un bloc EDN transversal sur la spécialité du cycle + QCM d'entraînement le week-end + bilan cartes et mise à jour du journal d'erreurs"
+    },
+    "semaines": [
+      {
+        "s": 1,
+        "debut": "2026-09-21",
+        "fin": "2026-09-27",
+        "matiere": "Ophtalmologie",
+        "sujet": "Réfraction et troubles de la réfraction, examen ophtalmologique, strabisme et amblyopie de l'enfant",
+        "edn_transversal": "cardio",
+        "vacances": false,
+        "note": ""
+      },
+      {
+        "s": 2,
+        "debut": "2026-09-28",
+        "fin": "2026-10-04",
+        "matiere": "Ophtalmologie",
+        "sujet": "Cataracte, glaucome chronique et glaucome aigu par fermeture de l'angle",
+        "edn_transversal": "pneumo",
+        "vacances": false,
+        "note": ""
+      },
+      {
+        "s": 3,
+        "debut": "2026-10-05",
+        "fin": "2026-10-11",
+        "matiere": "Ophtalmologie",
+        "sujet": "DMLA, rétinopathie diabétique, occlusions vasculaires rétiniennes",
+        "edn_transversal": "infectio",
+        "vacances": false,
+        "note": ""
+      },
+      {
+        "s": 4,
+        "debut": "2026-10-12",
+        "fin": "2026-10-18",
+        "matiere": "Ophtalmologie",
+        "sujet": "Urgences ophtalmologiques : œil rouge, baisse d'acuité visuelle brutale, traumatismes oculaires, corps étranger",
+        "edn_transversal": "neuro",
+        "vacances": false,
+        "note": ""
+      },
+      {
+        "s": 5,
+        "debut": "2026-10-19",
+        "fin": "2026-10-25",
+        "matiere": "ORL",
+        "sujet": "Angines, otites aiguës et chroniques, surdités de l'enfant et de l'adulte",
+        "edn_transversal": "nephro",
+        "vacances": false,
+        "note": ""
+      },
+      {
+        "s": 6,
+        "debut": "2026-10-26",
+        "fin": "2026-11-01",
+        "matiere": "ORL",
+        "sujet": "Vertiges, épistaxis, dyspnée laryngée aiguë, corps étrangers ORL",
+        "edn_transversal": "endoc",
+        "vacances": false,
+        "note": ""
+      },
+      {
+        "s": 7,
+        "debut": "2026-11-02",
+        "fin": "2026-11-08",
+        "matiere": "ORL",
+        "sujet": "Tumeurs des voies aérodigestives supérieures, pathologie des glandes salivaires, adénopathies cervicales",
+        "edn_transversal": "hge",
+        "vacances": false,
+        "note": ""
+      },
+      {
+        "s": 8,
+        "debut": "2026-11-09",
+        "fin": "2026-11-15",
+        "matiere": "Chirurgie maxillo-faciale",
+        "sujet": "Traumatologie faciale (fractures du massif facial, plaies), infections buccodentaires et cellulites cervico-faciales",
+        "edn_transversal": "hemato",
+        "vacances": false,
+        "note": ""
+      },
+      {
+        "s": 9,
+        "debut": "2026-11-16",
+        "fin": "2026-11-22",
+        "matiere": "Chirurgie maxillo-faciale",
+        "sujet": "Fentes labio-palatines, tumeurs maxillo-faciales, pathologie de l'articulation temporo-mandibulaire",
+        "edn_transversal": "cancero",
+        "vacances": false,
+        "note": ""
+      },
+      {
+        "s": 10,
+        "debut": "2026-11-23",
+        "fin": "2026-11-29",
+        "matiere": "Médecine intensive et réanimation",
+        "sujet": "États de choc (septique, cardiogénique, hypovolémique, anaphylactique), sepsis et sepsis grave",
+        "edn_transversal": "gyneco",
+        "vacances": false,
+        "note": ""
+      },
+      {
+        "s": 11,
+        "debut": "2026-11-30",
+        "fin": "2026-12-06",
+        "matiere": "Médecine intensive et réanimation",
+        "sujet": "SDRA, ventilation mécanique et sevrage ventilatoire",
+        "edn_transversal": "pediatrie",
+        "vacances": false,
+        "note": ""
+      },
+      {
+        "s": 12,
+        "debut": "2026-12-07",
+        "fin": "2026-12-13",
+        "matiere": "Médecine intensive et réanimation",
+        "sujet": "Épuration extra-rénale en réanimation, troubles hydro-électrolytiques sévères, sédation-analgésie",
+        "edn_transversal": "psy",
+        "vacances": false,
+        "note": ""
+      },
+      {
+        "s": 13,
+        "debut": "2026-12-14",
+        "fin": "2026-12-20",
+        "matiere": "Médecine intensive et réanimation",
+        "sujet": "Éthique en réanimation, limitation et arrêt des thérapeutiques, mort encéphalique et prélèvement d'organes, scores de gravité",
+        "edn_transversal": "urgences",
+        "vacances": false,
+        "note": ""
+      },
+      {
+        "s": 14,
+        "debut": "2026-12-21",
+        "fin": "2026-12-27",
+        "matiere": "Gériatrie, médecine adaptative et de réadaptation",
+        "sujet": "Vieillissement normal et pathologique, évaluation gériatrique standardisée, iatrogénie médicamenteuse",
+        "edn_transversal": "transversal",
+        "vacances": true,
+        "note": "Semaine de vacances universitaires (Noël) : rythme allégé assumé, pas de rattrapage à marche forcée."
+      },
+      {
+        "s": 15,
+        "debut": "2026-12-28",
+        "fin": "2027-01-03",
+        "matiere": "Gériatrie, médecine adaptative et de réadaptation",
+        "sujet": "Chutes et syndrome post-chute, dénutrition de la personne âgée",
+        "edn_transversal": "cardio",
+        "vacances": true,
+        "note": "Semaine de vacances universitaires (Noël) : rythme allégé assumé, pas de rattrapage à marche forcée."
+      },
+      {
+        "s": 16,
+        "debut": "2027-01-04",
+        "fin": "2027-01-10",
+        "matiere": "Gériatrie, médecine adaptative et de réadaptation",
+        "sujet": "Confusion aiguë, démences, troubles de la marche",
+        "edn_transversal": "pneumo",
+        "vacances": false,
+        "note": ""
+      },
+      {
+        "s": 17,
+        "debut": "2027-01-11",
+        "fin": "2027-01-17",
+        "matiere": "Gériatrie, médecine adaptative et de réadaptation",
+        "sujet": "Escarres, prévention de la dépendance, maltraitance de la personne âgée",
+        "edn_transversal": "infectio",
+        "vacances": false,
+        "note": ""
+      },
+      {
+        "s": 18,
+        "debut": "2027-01-18",
+        "fin": "2027-01-24",
+        "matiere": "Gériatrie, médecine adaptative et de réadaptation",
+        "sujet": "Médecine physique et de réadaptation : handicap, rééducation post-AVC, amputation et appareillage",
+        "edn_transversal": "neuro",
+        "vacances": false,
+        "note": ""
+      },
+      {
+        "s": 19,
+        "debut": "2027-01-25",
+        "fin": "2027-01-31",
+        "matiere": "Consolidation transversale",
+        "sujet": "QCM croisés sur les 5 matières du partiel, reprise intégrale du journal d'erreurs",
+        "edn_transversal": "nephro",
+        "vacances": false,
+        "note": ""
+      },
+      {
+        "s": 20,
+        "debut": "2027-02-01",
+        "fin": "2027-02-07",
+        "matiere": "Consolidation transversale",
+        "sujet": "QCM croisés, fiches de synthèse par matière, repérage des zones encore fragiles",
+        "edn_transversal": "endoc",
+        "vacances": false,
+        "note": ""
+      },
+      {
+        "s": 21,
+        "debut": "2027-02-08",
+        "fin": "2027-02-14",
+        "matiere": "Révision finale",
+        "sujet": "Cartes rang A uniquement sur les 5 matières, mocks chronométrés. Aucun contenu neuf.",
+        "edn_transversal": "hge",
+        "vacances": false,
+        "note": "Dernière semaine avant le partiel : consolidation uniquement, pas de nouveau contenu."
+      },
+      {
+        "s": 22,
+        "debut": "2027-02-15",
+        "fin": "2027-02-21",
+        "matiere": "Semaine d'examen",
+        "sujet": "Lundi : relecture cartes rang A uniquement. Mardi 16/02 : partiel. Reste de la semaine : décompression, puis bascule sur le tour EDN.",
+        "edn_transversal": "",
+        "vacances": false,
+        "note": "Le 16 février, tout se joue sur ce qui est déjà su. Coucher tôt la veille (lundi 15)."
+      }
+    ]
+  },
+  "phase_edn_tour": {
+    "libelle": "Tour EDN complet — 17 février 2027 → sprint final (période estimée, dates EDN non confirmées)",
+    "structure": [
+      {
+        "bloc": "Tour complet rang A",
+        "duree_semaines": 16,
+        "contenu": "Premier passage exhaustif sur les 367 items de la R2C, rang A uniquement. Cartes systématiques à chaque item, recoupées avec LiSA et les référentiels de collège."
+      },
+      {
+        "bloc": "Rang B ciblé + entraînement QI/DP",
+        "duree_semaines": 8,
+        "contenu": "Reprise en rang B sur les items à fort rendement, entraînement hebdomadaire QI/DP en conditions chronométrées."
+      },
+      {
+        "bloc": "Consolidation",
+        "duree_semaines": 4,
+        "contenu": "Deuxième tour ciblé sur les zones faibles identifiées dans le journal d'erreurs, répétition espacée intensive sur l'ensemble du deck."
+      },
+      {
+        "bloc": "Sprint final pré-EDN",
+        "duree_semaines": 3,
+        "contenu": "Reprise d'une structure de sprint dense (journée type ci-dessous) dans les trois dernières semaines avant l'EDN. À recaler précisément dès que les dates officielles sont publiées."
+      }
+    ],
+    "note": "Le calage précis de ce tour (et surtout du sprint final) dépend des dates officielles de l'EDN 2027, non publiées à ce jour. Durée indicative totale : environ 31 semaines, à ajuster dès la parution du calendrier officiel — normalement après l'ouverture des comptes UFR le 21/09/2026."
+  },
+  "template_journee_sprint": {
     "duree_totale_h": 7,
+    "usage": "À utiliser pendant le bloc « Sprint final pré-EDN » de la fin du tour EDN, pas avant.",
     "blocs": [
       {
         "nom": "Rappel actif",
         "duree_min": 60,
-        "moment": "matin (des le reveil)",
-        "contenu": "Cartes dues du jour (repetition espacee). Aucune relecture passive.",
-        "regle": "Si le backlog depasse 150 cartes, on ecrete : on garde les cartes rang A, on repousse le reste."
+        "moment": "matin (dès le réveil)",
+        "contenu": "Cartes dues du jour (répétition espacée). Aucune relecture passive.",
+        "regle": "Si le backlog dépasse 150 cartes, on écrète : on garde les cartes rang A, on repousse le reste."
       },
       {
         "nom": "Bloc principal",
         "duree_min": 180,
         "moment": "matin",
-        "contenu": "Specialite du jour, rang A uniquement au premier passage. Lecture active : on ferme le referentiel tous les 2 items et on restitue a voix haute.",
-        "regle": "Creer 8 a 15 cartes par item travaille, jamais plus. Une carte = un fait atomique."
+        "contenu": "Spécialité du jour, rang A uniquement au premier passage. Lecture active : on ferme le référentiel tous les 2 items et on restitue à voix haute.",
+        "regle": "Créer 8 à 15 cartes par item travaillé, jamais plus. Une carte = un fait atomique."
       },
       {
-        "nom": "Entrainement chronometre",
+        "nom": "Entraînement chronométré",
         "duree_min": 90,
-        "moment": "apres-midi",
-        "contenu": "QI + DP sur la specialite du matin, en conditions de temps.",
-        "regle": "Correction plus longue que l'epreuve. Chaque erreur genere une carte."
+        "moment": "après-midi",
+        "contenu": "QI + DP sur la spécialité du matin, en conditions de temps.",
+        "regle": "Correction plus longue que l'épreuve. Chaque erreur génère une carte."
       },
       {
         "nom": "Bloc secondaire",
         "duree_min": 90,
-        "moment": "fin d'apres-midi",
-        "contenu": "Petite specialite ou transversal (voir champ 'secondaire' du jour).",
-        "regle": "Balayage rapide, objectif couverture et pas maitrise."
+        "moment": "fin d'après-midi",
+        "contenu": "Petite spécialité ou transversal.",
+        "regle": "Balayage rapide, objectif couverture et non maîtrise."
       },
       {
         "nom": "Bilan",
         "duree_min": 30,
         "moment": "soir",
-        "contenu": "Relecture des cartes creees dans la journee, mise a jour du journal d'erreurs.",
-        "regle": "Non negociable. C'est ce bloc qui fait tenir la memorisation."
+        "contenu": "Relecture des cartes créées dans la journée, mise à jour du journal d'erreurs.",
+        "regle": "Non négociable. C'est ce bloc qui fait tenir la mémorisation."
       }
     ]
   },
-
-  "phase_1": {
-    "libelle": "Sprint rang A - 19 septembre au 11 octobre 2026",
-    "jours": [
-      { "j": 1, "date": "2026-09-19", "principal": "Cardiologie (SCA, insuffisance cardiaque, FA, valvulopathies)", "secondaire": "Methodologie EDN : format QI / DP, gestion du temps", "entrainement": "1 DP cardio + 40 QI", "charge": "normale" },
-      { "j": 2, "date": "2026-09-20", "principal": "Cardiologie (HTA, thrombose veineuse, embolie pulmonaire, arteriopathie)", "secondaire": "Therapeutique : anticoagulants, antiagregants", "entrainement": "1 DP + 40 QI", "charge": "normale" },
-      { "j": 3, "date": "2026-09-21", "principal": "Pneumologie (BPCO, asthme, PAC, insuffisance respiratoire)", "secondaire": "Tabac, sevrage, addictologie", "entrainement": "1 DP + 40 QI", "charge": "normale" },
-      { "j": 4, "date": "2026-09-22", "principal": "Pneumologie (cancer bronchique, pleuresies, pneumothorax, SAOS)", "secondaire": "Imagerie thoracique : lecture systematique", "entrainement": "1 DP + 40 QI", "charge": "normale" },
-      { "j": 5, "date": "2026-09-23", "principal": "Infectiologie (urgences : meningite, purpura fulminans, sepsis, PNA)", "secondaire": "Antibiotherapie : familles, spectres, indications", "entrainement": "1 DP + 40 QI", "charge": "normale" },
-      { "j": 6, "date": "2026-09-24", "principal": "Infectiologie (VIH, tuberculose, endocardite, vaccination, voyageur)", "secondaire": "Sante publique : declaration obligatoire, prevention", "entrainement": "1 DP + 40 QI", "charge": "normale" },
-      { "j": 7, "date": "2026-09-25", "principal": "LCA : bloc dedie (types d'etude, biais, mesures d'association)", "secondaire": "Statistiques : IC95, p, puissance, ITT", "entrainement": "1 article complet en conditions reelles", "charge": "normale", "note": "La LCA est une epreuve entiere de 3h le 15 octobre. Elle se travaille en bloc, pas en miettes." },
-      { "j": 8, "date": "2026-09-26", "principal": "Rappel actif global semaine 1 + reprise du journal d'erreurs", "secondaire": "Rien de neuf", "entrainement": "2 DP mixtes", "charge": "allegee" },
-      { "j": 9, "date": "2026-09-27", "principal": "Neurologie (AVC, epilepsie, cephalees, confusion, coma)", "secondaire": "Geriatrie : chute, iatrogenie, dependance", "entrainement": "1 DP + 40 QI", "charge": "normale" },
-      { "j": 10, "date": "2026-09-28", "principal": "Neurologie (SEP, Parkinson, neuropathies, myasthenie, demences)", "secondaire": "MPR : handicap, reeducation", "entrainement": "1 DP + 40 QI", "charge": "normale" },
-      { "j": 11, "date": "2026-09-29", "principal": "Psychiatrie (depression, suicide, bipolarite, schizophrenie, anxiete)", "secondaire": "Soins sans consentement, ethique, responsabilite", "entrainement": "1 DP + 40 QI", "charge": "normale", "note": "Le referentiel CNUP/AESP est en PDF libre : c'est la specialite ou la gratuite est la meilleure." },
-      { "j": 12, "date": "2026-09-30", "principal": "Hepato-gastro (hemorragie digestive, cirrhose, pancreatite, MICI)", "secondaire": "Nutrition : denutrition, obesite", "entrainement": "1 DP + 40 QI", "charge": "normale" },
-      { "j": 13, "date": "2026-10-01", "principal": "Hepato-gastro chirurgical (occlusion, appendicite, peritonite, hernies) + CCR", "secondaire": "Depistages organises", "entrainement": "1 DP + 40 QI", "charge": "normale" },
-      { "j": 14, "date": "2026-10-02", "principal": "Nephrologie (IRA, MRC, troubles hydro-electrolytiques, syndromes glomerulaires)", "secondaire": "Urologie : colique nephretique, retention, cancers uro", "entrainement": "1 DP + 40 QI", "charge": "normale" },
-      { "j": 15, "date": "2026-10-03", "principal": "Rappel actif global semaine 2", "secondaire": "LCA : 2e article chronometre", "entrainement": "2 DP mixtes", "charge": "allegee" },
-      { "j": 16, "date": "2026-10-04", "principal": "Endocrinologie (diabete et complications, thyroide, surrenale)", "secondaire": "Dyslipidemies, risque cardiovasculaire global", "entrainement": "1 DP + 40 QI", "charge": "normale" },
-      { "j": 17, "date": "2026-10-05", "principal": "Gynecologie-obstetrique (grossesse normale, pre-eclampsie, HPP, contraception)", "secondaire": "Sante de la femme : depistage col et sein", "entrainement": "1 DP + 40 QI", "charge": "normale" },
-      { "j": 18, "date": "2026-10-06", "principal": "Pediatrie (nourrisson febrile, bronchiolite, deshydratation, croissance, maltraitance)", "secondaire": "Vaccination de l'enfant", "entrainement": "1 DP + 40 QI", "charge": "normale" },
-      { "j": 19, "date": "2026-10-07", "principal": "Hematologie et cancerologie (anemies, leucemies, myelome, urgences oncologiques)", "secondaire": "Soins palliatifs, douleur, fin de vie", "entrainement": "1 DP + 40 QI", "charge": "normale" },
-      { "j": 20, "date": "2026-10-08", "principal": "Urgences et reanimation (arret cardiaque, chocs, intoxications, traumatologie, brulures)", "secondaire": "Anesthesie, transfusion", "entrainement": "1 DP + 40 QI", "charge": "normale" },
-      { "j": 21, "date": "2026-10-09", "principal": "Balayage petites specialites : dermatologie, ophtalmologie, ORL, rhumatologie, orthopedie", "secondaire": "Immunologie, anatomopathologie", "entrainement": "60 QI mixtes", "charge": "normale", "note": "Balayage, pas approfondissement. Objectif : ne pas decouvrir un item le jour J." },
-      { "j": 22, "date": "2026-10-10", "principal": "Transversaux : sante publique, therapeutique, iatrogenie, ethique et deontologie", "secondaire": "Reprise integrale du journal d'erreurs", "entrainement": "1 DP + 40 QI", "charge": "normale" },
-      { "j": 23, "date": "2026-10-11", "principal": "Cartes rang A uniquement, balayage complet", "secondaire": "Logistique : convocation, trajet, materiel, sommeil", "entrainement": "Aucun. Pas de nouveau contenu.", "charge": "tres allegee", "note": "Veille d'epreuve. Coucher tot. Le gain marginal d'une heure de revision est inferieur au cout d'une nuit courte." }
-    ]
-  },
-
-  "phase_2": {
-    "libelle": "Jours d'epreuve - 12 au 15 octobre 2026",
+  "phase_edn_examen": {
+    "libelle": "Jours d'épreuve EDN — dates estimées, à confirmer dès la publication du calendrier officiel",
+    "a_confirmer": true,
     "regles": [
-      "Entre deux unites de composition : cartes rang A de la specialite la plus probable, maximum 45 minutes. Rien d'autre.",
-      "Ne jamais rechercher la correction d'une epreuve deja passee avant la fin des quatre jours.",
-      "Le 14 au soir : bascule integrale sur la LCA, qui est une epreuve de methode et non de connaissances.",
-      "Repas, hydratation, sommeil traites comme des elements du planning et non comme des variables d'ajustement."
+      "Entre deux unités de composition : cartes rang A de la spécialité la plus probable, maximum 45 minutes. Rien d'autre.",
+      "Ne jamais rechercher la correction d'une épreuve déjà passée avant la fin de toutes les épreuves.",
+      "Le soir précédant la LCA : bascule intégrale sur la LCA, qui est une épreuve de méthode et non de connaissances.",
+      "Repas, hydratation, sommeil traités comme des éléments du planning et non comme des variables d'ajustement."
     ]
   },
-
-  "phase_3": {
-    "libelle": "Filet janvier - a n'activer que si le seuil rang A n'est pas atteint",
-    "periode": ["2026-10-20", "2027-01-12"],
-    "condition_activation": "Resultats session 1 inferieurs au seuil de 14/20 sur les connaissances de rang A",
+  "phase_edn_rattrapage": {
+    "libelle": "Filet — seconde session EDN (estimée mi-janvier 2028, à confirmer)",
+    "a_confirmer": true,
+    "condition_activation": "Résultats de la première session inférieurs au seuil minimal de rang A requis pour participer aux ECOS.",
     "structure": [
-      { "bloc": "Decompression", "semaines": 1, "contenu": "Arret complet. Analyse froide des resultats par specialite une fois le rapport disponible." },
-      { "bloc": "Tour complet", "semaines": 7, "contenu": "Premier passage exhaustif sur les 367 items, rang A puis rang B sur les specialites a fort rendement. Rythme : 7 a 8 items par jour." },
-      { "bloc": "Consolidation", "semaines": 3, "contenu": "Deuxieme tour cible sur les zones faibles identifiees. Cartes en repetition espacee sur l'integralite du deck." },
-      { "bloc": "Affutage", "semaines": 2, "contenu": "DP et QI quotidiens en conditions reelles, plus rappel actif. Aucun contenu neuf les 10 derniers jours." }
+      {
+        "bloc": "Décompression",
+        "semaines": 1,
+        "contenu": "Arrêt complet. Analyse froide des résultats par spécialité une fois le rapport disponible."
+      },
+      {
+        "bloc": "Reprise ciblée",
+        "semaines": 8,
+        "contenu": "Reprise ciblée des spécialités faibles, rang A puis rang B sur les items à fort rendement."
+      },
+      {
+        "bloc": "Affûtage",
+        "semaines": 2,
+        "contenu": "DP et QI quotidiens en conditions réelles, plus rappel actif. Aucun contenu neuf les 10 derniers jours."
+      }
     ],
-    "note": "Cette phase suppose un deck de cartes deja constitue pendant la phase 1. C'est le principal actif transferable d'une session a l'autre."
+    "note": "Cette phase suppose un deck de cartes déjà constitué pendant les phases précédentes — c'est le principal actif transférable d'une session à l'autre."
   },
-
   "regles_transversales": [
-    "Une carte ne se cree qu'a partir d'une erreur ou d'un fait rang A explicite. Jamais a partir d'un paragraphe entier.",
+    "Une carte ne se crée qu'à partir d'une erreur ou d'un fait rang A explicite. Jamais à partir d'un paragraphe entier.",
     "Le rappel actif prime sur la relecture, toujours. Si le temps manque, on coupe la lecture, pas les cartes.",
-    "Le journal d'erreurs est un fichier unique, relu integralement les jours allegees.",
-    "Aucun nouveau support d'apprentissage apres le 1er octobre. Changer de source a J-10 est le meilleur moyen de tout desorganiser.",
-    "Les contenus doivent etre recoupes avec LiSA et les referentiels de college : ce sont les seules sources opposables."
+    "Au lendemain d'une garde de 24h : pas de séance structurée. Cartes dues uniquement, en mode léger, sans culpabilité.",
+    "Le journal d'erreurs est un fichier unique, relu intégralement lors des semaines de consolidation.",
+    "Les contenus doivent être recoupés avec LiSA et les référentiels de collège : ce sont les seules sources opposables.",
+    "Les dates de l'EDN 2027 affichées sur ce site sont des estimations tant que le calendrier officiel n'est pas publié — à vérifier régulièrement auprès de la scolarité ou du CNG."
   ]
 }
