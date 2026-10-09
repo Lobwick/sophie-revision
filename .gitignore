@@ -1,0 +1,10 @@
+.venv/
+cours/
+suivi/
+.env
+__pycache__/
+.DS_Store
+# Contenu des cours (texte extrait, OCR, index, extraits) : non redistribuable, se reconstruit depuis cours/ (voir knowledge/README.md)
+knowledge/*
+!knowledge/README.md
+!knowledge/cards_verification_report.md

@@ -1,0 +1,8 @@
+cours
+.venv
+knowledge/md
+knowledge/ocr_cache.jsonl
+knowledge/extraction_report.json
+suivi
+tests
+.git

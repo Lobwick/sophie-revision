@@ -1,0 +1,1 @@
+../../agents/coach-medecine-interne.md

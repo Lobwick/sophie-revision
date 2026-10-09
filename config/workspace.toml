@@ -1,0 +1,18 @@
+# Configuration du coach internat. Les valeurs personnelles (dates, heures) vivent dans le profil (outil set_profile → suivi/suivi.db).
+[language]
+documents = "fr"
+responses = "fr"
+
+[exam]
+ville = "Lille"
+# Vérifier chaque année sur cng.sante.fr et l'UFR3S Lille. L'étudiante passe l'écrit (EDN) en octobre 2027 ; dates exactes et ECOS à confirmer
+# (la « campagne » porte le millésime de l'entrée en internat : EDN d'octobre N-1, ECOS au printemps N).
+sources_officielles = ["has-sante.fr", "cng.sante.fr", "ufr3s.univ-lille.fr", "ansm.sante.fr", "base-donnees-publique.medicaments.gouv.fr"]
+
+[agents]
+enabled = ["planificateur", "tuteur", "examinateur", "coach-cardiologie", "coach-pneumologie", "coach-neurologie", "coach-endocrinologie",
+           "coach-pediatrie", "coach-gynecologie", "coach-maladies-infectieuses", "coach-rhumatologie", "coach-medecine-interne",
+           "coach-dermatologie", "coach-ophtalmologie", "coach-chirurgie-orthopedique", "coach-psychiatrie"]
+
+[revision]
+repartition = { apprentissage = 60, questions_chronometrees = 30, revisions_espacees = 10 }

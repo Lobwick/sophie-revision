@@ -1,0 +1,185 @@
+{
+ "_doc": "Corrections apportées au deck d'origine (sophie-revision, généré automatiquement le 2026-09-19) après confrontation aux cours et aux recommandations. Chaque entrée garde la version d'avant dans la carte finale (champ verification.avant).",
+ "corrections": {
+  "cardio-001": {
+   "statut": "corrigee",
+   "answer": "Sus-décalage persistant du segment ST au point J, convexe vers le haut, dans au moins deux dérivations contiguës : ≥ 1 mm dans toutes les dérivations sauf V2-V3 ; en V2-V3, ≥ 2 mm chez l'homme de 40 ans ou plus, ≥ 2,5 mm chez l'homme de moins de 40 ans, ≥ 1,5 mm chez la femme. Le critère n'est pas applicable en cas d'hypertrophie ventriculaire gauche, de bloc de branche gauche ou de stimulation ventriculaire : un bloc de branche gauche isolé n'est plus considéré comme un équivalent de SCA ST+, et la douleur thoracique persistante s'interprète selon le contexte clinique.",
+   "motif": "L'ancienne version faisait du bloc de branche gauche récent un équivalent de SCA ST+, ce que ne retient plus la 4e définition universelle de l'infarctus (2018) et que le cours range parmi les exceptions du critère. Seuil de l'homme de moins de 40 ans (2,5 mm) ajouté.",
+   "sources_cours": [
+    [
+     "Syndromes Coronariens Aigus",
+     20
+    ]
+   ],
+   "sources_web": [
+    {
+     "titre": "Fourth universal definition of myocardial infarction (2018)",
+     "url": "https://pubmed.ncbi.nlm.nih.gov/30165617/",
+     "annee": 2018
+    }
+   ]
+  },
+  "cardio-002": {
+   "statut": "corrigee",
+   "answer": "Si l'angioplastie primaire est réalisable dans les 120 minutes suivant le diagnostic : angioplastie primaire. Sinon : fibrinolyse immédiate, bolus à administrer dans les 10 minutes suivant le diagnostic (ESC 2023), puis transfert vers un centre disposant d'une angioplastie : coronarographie dans les 24 heures si la fibrinolyse est un succès, angioplastie de sauvetage en cas d'échec.",
+   "motif": "L'ancienne version donnait 30 minutes pour la fibrinolyse, un repère abandonné : l'ESC 2023 vise 10 minutes entre le diagnostic et le bolus. Le cours dit « fibrinolyse immédiate ».",
+   "sources_cours": [
+    [
+     "Syndromes Coronariens Aigus",
+     23
+    ],
+    [
+     "Syndromes Coronariens Aigus",
+     26
+    ]
+   ],
+   "sources_web": [
+    {
+     "titre": "2023 ESC Guidelines for the management of acute coronary syndromes",
+     "url": "https://academic.oup.com/eurheartj/article/44/38/3720/7243210",
+     "annee": 2023
+    }
+   ]
+  },
+  "pediatrie-002": {
+   "statut": "corrigee",
+   "answer": "Avant 6 semaines : hospitalisation systématique avec examens complémentaires systématiques. De 6 à 12 semaines : hospitalisation ou prise en charge ambulatoire selon la tolérance et le contexte. Bilan initial : NFS, CRP, procalcitonine, ECBU, hémoculture, ± ponction lombaire, ± radiographie thoracique. Le risque d'infection bactérienne est élevé et les signes cliniques pauvres à cet âge.",
+   "motif": "L'ancienne version imposait l'hospitalisation pour tout nourrisson de moins de 3 mois ; le cours distingue moins de 6 semaines (hospitalisation systématique) et 6 à 12 semaines (selon la tolérance).",
+   "sources_cours": [
+    [
+     "Fièvre chez l'enfant",
+     4
+    ],
+    [
+     "Fièvre chez l'enfant",
+     43
+    ]
+   ],
+   "sources_web": []
+  },
+  "nephro-001": {
+   "statut": "corrigee",
+   "answer": "Classer l'IRA : pré-rénale (fonctionnelle), rénale (organique) ou post-rénale (obstructive), en gardant en tête les complications menaçantes (hyperkaliémie, surcharge, acidose) qui peuvent imposer une épuration en urgence. Imagerie rénale (échographie) devant toute IRA : une dilatation des cavités pyélocalicielles impose une prise en charge urgente (avis urologique, dérivation des urines).",
+   "motif": "L'ancienne version affirmait que l'obstacle est « la seule cause immédiatement curable », ce que le cours ne dit pas (une IRA fonctionnelle est aussi rapidement réversible) et omettait la recherche des complications menaçantes.",
+   "sources_cours": [
+    [
+     "Conférence introductive",
+     52
+    ],
+    [
+     "Conférence introductive",
+     56
+    ],
+    [
+     "Conférence introductive",
+     57
+    ]
+   ],
+   "sources_web": []
+  },
+  "reanimation-007": {
+   "statut": "corrigee",
+   "answer": "Critères cliniques : absence totale de conscience, abolition de tous les réflexes du tronc cérébral, absence de ventilation spontanée testée par une épreuve d'hypercapnie. Confirmation paraclinique : soit deux électroencéphalogrammes plats et aréactifs de 30 minutes réalisés à 4 heures d'intervalle, soit une angiographie cérébrale (le plus souvent un angioscanner) objectivant l'arrêt de la circulation encéphalique.",
+   "motif": "L'ancienne version parlait de « deux examens cliniques espacés », absents du cours : la confirmation repose sur deux EEG ou une angiographie.",
+   "sources_cours": [
+    [
+     "Décès",
+     5
+    ]
+   ],
+   "sources_web": []
+  },
+  "geriatrie_mpr-007": {
+   "statut": "corrigee",
+   "question": "Comment diagnostique-t-on la dénutrition de la personne âgée (HAS 2021) ?",
+   "answer": "Au moins un critère phénotypique ET au moins un critère étiologique. Phénotypiques : perte de poids ≥ 5 % en 1 mois, ou ≥ 10 % en 6 mois, ou ≥ 10 % par rapport au poids habituel avant la maladie ; IMC < 22 kg/m² ; sarcopénie confirmée. Étiologiques : réduction de la prise alimentaire (≥ 50 % pendant plus d'1 semaine, ou toute réduction des apports pendant plus de 2 semaines), malabsorption, situation d'agression. L'albuminémie n'est pas un critère diagnostique : elle sert à apprécier la sévérité (≤ 30 g/L).",
+   "motif": "L'ancienne version utilisait l'albuminémie comme critère de dépistage, ce que la HAS a abandonné en 2021 (critère de sévérité seulement), et omettait le principe phénotypique + étiologique.",
+   "sources_cours": [
+    [
+     "Cognition, iatrogénie, nutrition",
+     59
+    ]
+   ],
+   "sources_web": [
+    {
+     "titre": "HAS — Diagnostic de la dénutrition chez la personne de 70 ans et plus",
+     "url": "https://www.has-sante.fr/jcms/p_3165944/",
+     "annee": 2021
+    }
+   ]
+  },
+  "ophtalmo-006": {
+   "statut": "completee",
+   "answer": "Rétinopathie non proliférante (minime, modérée, sévère) puis proliférante avec néovascularisation. Dépistage chez tous les diabétiques : dès le diagnostic pour le type 2 et pour le type 1 de l'adulte, à partir de 10 ans pour le type 1 de l'enfant. Surveillance : annuelle en l'absence de rétinopathie ou si elle est minime ; tous les 4 à 6 mois en cas de rétinopathie non proliférante modérée à sévère ; plus rapprochée si proliférante ou compliquée ; tous les 2 ans possible si diabète équilibré (HbA1c < 7 %), tension équilibrée et absence de rétinopathie. Grossesse, puberté, équilibration trop rapide de la glycémie et chirurgie de la cataracte aggravent le risque.",
+   "motif": "L'ancienne version, juste mais incomplète, donnait un rythme annuel unique ; le cours précise les rythmes selon le stade et les situations à risque.",
+   "sources_cours": [
+    [
+     "Rétinopathie diabétique",
+     31
+    ],
+    [
+     "Rétinopathie diabétique",
+     32
+    ],
+    [
+     "Rétinopathie diabétique",
+     33
+    ]
+   ],
+   "sources_web": []
+  },
+  "endoc-001": {
+   "statut": "confirmee_cours",
+   "remarque": "Conforme au cours (qui écrit « > » pour l'HbA1c et la glycémie aléatoire). Le cours retient l'HbA1c comme critère.",
+   "sources_cours": [
+    [
+     "Diagnostiquer un diabète",
+     4
+    ]
+   ],
+   "sources_web": []
+  },
+  "cardio-004": {
+   "statut": "confirmee_cours",
+   "remarque": "Composition du CHA2DS2-VASc exacte. Pour mémoire : un résumé de l'ESC 2024 indique que ces recommandations proposent un score CHA2DS2-VA, sans le critère sexe (non vérifié sur le texte original) ; à confirmer selon ce que vise le collège.",
+   "sources_cours": [
+    [
+     "Fibrillation Atriale",
+     26
+    ]
+   ],
+   "sources_web": []
+  },
+  "orl-001": {
+   "statut": "completee",
+   "question": "Quelle est la démarche devant une angine érythémato-pultacée et que contient le score de Mac Isaac ?",
+   "answer": "Moins de 3 ans : angine virale, ni test ni antibiotique. De 3 à 15 ans : test de diagnostic rapide (TDR) du streptocoque du groupe A d'emblée. Après 15 ans : score de Mac Isaac pour décider du TDR (fièvre > 38 °C, absence de toux, atteinte amygdalienne, adénopathie cervicale sensible : +1 chacun ; âge 3-14 ans +1, 15-44 ans 0, ≥ 45 ans −1) ; TDR si score ≥ 2. Attention : la diapo du cours écrit « âge 15-44 ans = +1 », ce qui diffère des sources (15-44 ans = 0).",
+   "motif": "L'ancienne carte donnait le score sans la démarche selon l'âge (TDR d'emblée entre 3 et 15 ans, rien avant 3 ans). La diapo du cours attribue +1 à la tranche 15-44 ans, ce que ne confirment pas les sources consultées : divergence signalée dans la carte.",
+   "sources_cours": [
+    [
+     "Infections ORL",
+     44
+    ]
+   ],
+   "sources_web": [
+    {
+     "titre": "SPILF — TDR angine (JNI 2008), documents consultés via infectiologie.com",
+     "url": "https://www.infectiologie.com/UserFiles/File/medias/JNI/JNI08/Com/TDR-Partouche2008.pdf",
+     "annee": 2008
+    }
+   ]
+  },
+  "pneumo-005": {
+   "statut": "completee",
+   "answer": "Dans le cours : exsudat si protides pleuraux > 35 g/L et LDH pleuraux > 200 UI/L ; transsudat si protides < 25 g/L et LDH < 200 UI/L. Critères de Light (un seul suffit pour parler d'exsudat) : rapport protides pleuraux/sériques > 0,5, ou rapport LDH pleuraux/sériques > 0,6, ou LDH pleuraux supérieurs aux deux tiers de la limite supérieure des LDH sériques normales.",
+   "motif": "L'ancienne carte ne donnait que les critères de Light ; le cours enseigne surtout la classification par protides et LDH, que la carte ne mentionnait pas. Les critères de Light ne figurent pas dans les pages de cours retrouvées.",
+   "sources_cours": [
+    [
+     "Pathologies Pleurales",
+     45
+    ]
+   ],
+   "sources_web": []
+  }
+ }
+}

@@ -1,0 +1,1 @@
+../../agents/coach-maladies-infectieuses.md
